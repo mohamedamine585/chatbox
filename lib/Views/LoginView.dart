@@ -1,4 +1,5 @@
 import 'package:chat_box/authservice/authservice.dart';
+import 'package:chat_box/chatservice/chatuser/chatservice.dart';
 import 'package:chat_box/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -48,6 +49,10 @@ class _LoginViewState extends State<LoginView> {
             onPressed: () async {
               final user = await Authservice.firebase()
                   .login(email: email.text, password: password.text);
+              if (user != null) {
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil(homeview, (route) => false);
+              }
             },
             child: const Text('Log in')),
         TextButton(
@@ -55,7 +60,7 @@ class _LoginViewState extends State<LoginView> {
               Navigator.of(context)
                   .pushNamedAndRemoveUntil(registerview, (route) => false);
             },
-            child: const Text("You haven't an account")),
+            child: const Text("I haven't an account")),
       ]),
     );
   }

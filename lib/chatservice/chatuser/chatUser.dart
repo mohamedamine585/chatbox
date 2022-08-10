@@ -4,9 +4,9 @@ import 'consts.dart';
 
 class chatUser {
   final String docid;
-  final String Username;
-  final String email;
-  final String photourl;
+  final String? Username;
+  final String? email;
+  final String? photourl;
 
   const chatUser(
       {required this.Username,
@@ -15,7 +15,7 @@ class chatUser {
       required this.docid});
   chatUser.fromsnapshot(QueryDocumentSnapshot<Map<String, dynamic>> snapshot)
       : docid = snapshot.id,
-        email = snapshot.data()[chatuser_email] as String,
-        Username = snapshot.data()[chatuser_name] as String,
-        photourl = snapshot.data()[userphotourl] as String;
+        email = snapshot.data()[chatuser_email] as String?,
+        Username = snapshot.data()[chatuser_name] as String?,
+        photourl = snapshot.data()[userphotourl] as String?;
 }

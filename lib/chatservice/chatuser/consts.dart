@@ -6,3 +6,5 @@ const status = 'status';
 const message = 'message';
 const sender = 'sender';
 const receiver = 'receiver';
+const frortobeemail = 'friendemail';
+const Messagesdocid = 'messagesdocid';

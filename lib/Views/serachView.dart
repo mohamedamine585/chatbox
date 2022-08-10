@@ -1,0 +1,78 @@
+import 'package:chat_box/chatservice/chatuser/chatUser.dart';
+import 'package:chat_box/chatservice/chatuser/chatservice.dart';
+import 'package:chat_box/consts.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/src/widgets/container.dart';
+import 'package:flutter/src/widgets/framework.dart';
+
+import '../Imageservice/Image.dart';
+
+class searchdelegate extends SearchDelegate {
+  @override
+  String get searchFieldLabel => "Search for friends";
+  @override
+  List<Widget>? buildActions(BuildContext context) {
+    return [
+      IconButton(
+        onPressed: () {
+          query = '';
+        },
+        icon: const Icon(Icons.clear),
+      ),
+    ];
+  }
+
+  @override
+  Widget? buildLeading(BuildContext context) {
+    IconButton(
+      onPressed: () {
+        close(context, null);
+      },
+      icon: const Icon(Icons.person),
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return StreamBuilder(
+        stream: chatservice().get_searched(text: query),
+        builder: ((context, snapshot) {
+          return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: ((context, index) {
+                final user = snapshot.data!.elementAt(index);
+                return ListTile(
+                  title: Text(user.Username ?? ''),
+                  leading: const Icon(Icons.person),
+                  onTap: () {
+                    Navigator.of(context)
+                        .pushNamed(Chatuserview, arguments: user);
+                  },
+                );
+              }));
+        }));
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return StreamBuilder(
+        stream: chatservice().get_searched(text: query),
+        builder: ((context, snapshot) {
+          return ListView.builder(
+              itemCount: snapshot.data?.length,
+              itemBuilder: ((context, index) {
+                final user = snapshot.data?.elementAt(index);
+                return ListTile(
+                  title: Text(user?.Username ?? ''),
+                  leading: Imagetakeruploader()
+                      .showingimage(email: user?.email, radius: 20),
+                  onTap: () {
+                    Navigator.of(context)
+                        .pushNamed(Chatuserview, arguments: user);
+                  },
+                );
+              }));
+        }));
+  }
+}

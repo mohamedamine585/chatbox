@@ -38,6 +38,10 @@ dependencies:
   firebase_auth: ^3.6.1
   firebase_analytics: ^9.3.0
   cloud_firestore: ^3.4.2
+  flutter_profile_picture: ^2.0.0
+  image_picker: ^0.8.5+3
+  flutter_storage: ^0.9.4
+  firebase_storage: ^10.3.4
 
 dev_dependencies:
   flutter_test:

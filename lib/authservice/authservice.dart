@@ -1,6 +1,7 @@
 import 'package:chat_box/authservice/Authuser.dart';
 import 'package:chat_box/authservice/Firebaseauthprovider.dart';
 import 'package:chat_box/authservice/authprovider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Authservice implements Authprovider {
   final Authprovider provider;
@@ -31,5 +32,10 @@ class Authservice implements Authprovider {
       {required String email, required String password}) async {
     await provider.register(email: email, password: password);
     return Authuser(email);
+  }
+
+  @override
+  User? getcurrentuser() {
+    return FirebaseAuth.instance.currentUser;
   }
 }

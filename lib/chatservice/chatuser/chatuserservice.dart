@@ -1,4 +1,5 @@
 import 'package:chat_box/chatservice/chatuser/chatUser.dart';
+import 'package:chat_box/chatservice/chatuser/requestsender/receiver.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'consts.dart';
@@ -28,12 +29,34 @@ class chatuserservice {
       chatuser_name: name,
       userphotourl: photourl,
     });
-    await FirebaseFirestore.instance.collection(chatuser_name).add({});
+    await FirebaseFirestore.instance.collection(name).add({});
     return chatUser(
       docid: document.id,
       Username: name,
       email: email,
       photourl: userphotourl,
     );
+  }
+
+  Stream<Iterable<friend_ortobe?>?> getallfriends({required String Username}) {
+    return FirebaseFirestore.instance.collection(Username).snapshots().map(
+        (event) => event.docs
+            .map((e) => friend_ortobe.fromsnapshot(e))
+            .where((element) => element.Status == 'friend'));
+  }
+
+  Stream<Iterable<friend_ortobe?>?> getrequestsenders(
+      {required String Username}) {
+    return FirebaseFirestore.instance.collection(Username).snapshots().map(
+        (event) => event.docs
+            .map((e) => friend_ortobe.fromsnapshot(e))
+            .where((element) => element.Status == 'request receiver'));
+  }
+
+  Stream<Iterable<chatUser?>?> getuserforphoto({required String? email}) {
+    return FirebaseFirestore.instance.collection('users').snapshots().map(
+        (event) => event.docs
+            .map((e) => chatUser.fromsnapshot(e))
+            .where((element) => element.email == email));
   }
 }

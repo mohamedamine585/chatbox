@@ -1,5 +1,6 @@
 import 'package:chat_box/Views/LoginView.dart';
 import 'package:chat_box/Views/RegisterView.dart';
+import 'package:chat_box/Views/chatboxhome.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +15,10 @@ class MyApp extends StatelessWidget {
     return FutureBuilder(
         future: Authservice.firebase().initialize(),
         builder: ((context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.active) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            final user = Authservice.firebase().getcurrentuser();
+
+            if (user != null) return const Chatboxhome();
             return const LoginView();
           }
           return const RegisterView();

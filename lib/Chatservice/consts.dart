@@ -1,0 +1,15 @@
+const chatuser_email = 'email';
+const chatuser_name = 'name';
+const userphotourl = 'photourl';
+const tobefriendname = 'tobefriendname';
+const status = 'status';
+const message = 'message';
+const sender = 'sender';
+const receiver = 'receiver';
+const frortobeemail = 'friendemail';
+const Messagesdocid = 'messagesdocid';
+const tImestamp = 'timestamp';
+const Content = 'content';
+const Sendername = 'sendername';
+
+const Receivername = 'receivername';

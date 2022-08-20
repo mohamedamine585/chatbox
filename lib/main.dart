@@ -1,3 +1,4 @@
+import 'package:chat/views/Chatview.dart';
 import 'package:chat/views/Loginview.dart';
 import 'package:chat/views/accountview.dart';
 import 'package:chat/views/changenameview.dart';
@@ -18,5 +19,6 @@ void main() {
     'accountview': (((context) => const Accountview())),
     'Notificationsview': (((context) => const Notificationsview())),
     'changenameview': (((context) => const Changenameview())),
+    'chatview': ((context) => const Chatmessages()),
   }));
 }

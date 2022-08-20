@@ -73,6 +73,10 @@ class _Chatboxhome extends State<Chatboxhome> {
                             final friend = snapshot1.data!.elementAt(index);
 
                             return ListTile(
+                                onTap: () {
+                                  Navigator.of(context).pushNamed(chatview,
+                                      arguments: [user, friend]);
+                                },
                                 title: Text(
                                   friend!.name!,
                                   maxLines: 1,

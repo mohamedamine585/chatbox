@@ -9,3 +9,4 @@ const standardimageurl =
 const chat_bubble_url =
     'http://www.art-reach.org/wp-content/uploads/2017/01/exchange.png';
 const chagenameview = 'changenameview';
+const chatview = 'chatview';

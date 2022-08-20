@@ -77,6 +77,14 @@ class chatservice {
         .delete();
   }
 
+  Stream<Iterable<Message?>?> getmessages({required String messagesdocid}) {
+    return FirebaseFirestore.instance
+        .collection(messagesdocid)
+        .orderBy(tImestamp, descending: true)
+        .snapshots()
+        .map((event) => event.docs.map((e) => Message.fromsnapshot(e)));
+  }
+
   Future<void> acceptrfriendrequest(
       {required String username, required String friendname}) async {
     try {
@@ -104,19 +112,19 @@ class chatservice {
         status: 'friend',
       });
       await FirebaseFirestore.instance
-          .collection(username + '/' + friendname)
+          .collection(username + '*' + friendname)
           .add({});
       await FirebaseFirestore.instance
           .collection(username)
           .doc(userdocument.docs.first.id)
           .update({
-        Messagesdocid: username + '/' + friendname,
+        Messagesdocid: username + '*' + friendname,
       });
       await FirebaseFirestore.instance
           .collection(friendname)
           .doc(frienddocument.docs.first.id)
           .update({
-        Messagesdocid: username + '/' + friendname,
+        Messagesdocid: username + '*' + friendname,
       });
     } catch (e) {
       print(e);
@@ -126,19 +134,14 @@ class chatservice {
   Future<void> Sendmessage(
       {required String sendername,
       required String receivername,
-      required String content}) async {
-    final receiverdoc = await FirebaseFirestore.instance
-        .collection(sendername)
-        .where(tobefriendname, isEqualTo: receivername)
-        .get()
-        .then((value) => value);
-    final messagesdoc = Message.fromsnapshot(receiverdoc.docs.first);
-    final Messagecollection =
-        FirebaseFirestore.instance.collection(messagesdoc.docid);
+      required String content,
+      required String messcollid}) async {
+    final Messagecollection = FirebaseFirestore.instance.collection(messcollid);
+
     await Messagecollection.add({
       Sendername: sendername,
       Receivername: receivername,
-      content: content,
+      Content: content,
       tImestamp: DateTime.now().microsecondsSinceEpoch,
     });
   }
@@ -183,7 +186,7 @@ class chatservice {
                         receiveremail: viewedemail!);
                   },
                   child: const Text('send chat invitation'));
-            } else if (data?.data?.first == 'friend') {
+            } else if (data?.data?.first.Status == 'friend') {
               return Column(
                 children: [
                   const Center(

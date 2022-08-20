@@ -1,13 +1,14 @@
-import 'package:chat_box/Views/AccountVie.dart';
-import 'package:chat_box/Views/LoginView.dart';
-import 'package:chat_box/Views/Notificationsview.dart';
-import 'package:chat_box/Views/RegisterView.dart';
-import 'package:chat_box/Views/chatboxhome.dart';
-import 'package:chat_box/Views/chatuserView.dart';
-import 'package:chat_box/Views/serachView.dart';
-import 'package:chat_box/consts.dart';
+import 'package:chat/views/Chatview.dart';
+import 'package:chat/views/Loginview.dart';
+import 'package:chat/views/accountview.dart';
+import 'package:chat/views/changenameview.dart';
+import 'package:chat/views/chatboxview.dart';
+import 'package:chat/views/chatuserview.dart';
+import 'package:chat/views/myapp.dart';
+import 'package:chat/views/notificationview.dart';
 import 'package:flutter/material.dart';
-import 'Views/Myapp.dart';
+
+import 'views/Registerview.dart';
 
 void main() {
   runApp(MaterialApp(home: const MyApp(), routes: {
@@ -17,5 +18,7 @@ void main() {
     'chatuserview': ((context) => const chatuserview()),
     'accountview': (((context) => const Accountview())),
     'Notificationsview': (((context) => const Notificationsview())),
+    'changenameview': (((context) => const Changenameview())),
+    'chatview': ((context) => const Chatmessages()),
   }));
 }

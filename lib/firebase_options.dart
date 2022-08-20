@@ -55,7 +55,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDqH1nyiLIP54lMfIZxxhj33e5_SkoTpLo',
-    appId: '1:135373657576:android:9986890bfe8fe01712005d',
+    appId: '1:135373657576:android:b118b4284ff97fae12005d',
     messagingSenderId: '135373657576',
     projectId: 'chatbox-3d921',
     storageBucket: 'chatbox-3d921.appspot.com',
@@ -63,21 +63,21 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCq_1JvGiKCVHjS2nCi2-eHA-RWkzujK3Q',
-    appId: '1:135373657576:ios:97ec9993d157a5aa12005d',
+    appId: '1:135373657576:ios:02f4245f7a70c51e12005d',
     messagingSenderId: '135373657576',
     projectId: 'chatbox-3d921',
     storageBucket: 'chatbox-3d921.appspot.com',
-    iosClientId: '135373657576-pkvgabso99hifb38539tup62ghfov9r3.apps.googleusercontent.com',
-    iosBundleId: 'com.example.chatBox',
+    iosClientId: '135373657576-0ottn9qnjk9teg4o7okphrr2d8mbbfuh.apps.googleusercontent.com',
+    iosBundleId: 'com.example.chat',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyCq_1JvGiKCVHjS2nCi2-eHA-RWkzujK3Q',
-    appId: '1:135373657576:ios:97ec9993d157a5aa12005d',
+    appId: '1:135373657576:ios:02f4245f7a70c51e12005d',
     messagingSenderId: '135373657576',
     projectId: 'chatbox-3d921',
     storageBucket: 'chatbox-3d921.appspot.com',
-    iosClientId: '135373657576-pkvgabso99hifb38539tup62ghfov9r3.apps.googleusercontent.com',
-    iosBundleId: 'com.example.chatBox',
+    iosClientId: '135373657576-0ottn9qnjk9teg4o7okphrr2d8mbbfuh.apps.googleusercontent.com',
+    iosBundleId: 'com.example.chat',
   );
 }

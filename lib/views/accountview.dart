@@ -47,40 +47,46 @@ class _AccountviewState extends State<Accountview> {
               ),
               Imagetakeruploader()
                   .showingimage(radius: 85, email: snapshot.data?.first?.email),
-              const SizedBox(height: 5),
-              Text(
-                snapshot.data?.first?.Username ?? '',
-                style: const TextStyle(fontSize: 30),
+              const SizedBox(height: 27),
+              Row(
+                children: [
+                  const Text('                   Name *  :'),
+                  Text(
+                    snapshot.data?.first?.Username ?? '',
+                    style: const TextStyle(fontSize: 20),
+                  ),
+                ],
               ),
               const SizedBox(
-                height: 10,
+                height: 15,
               ),
-              Text(snapshot.data?.first?.email ?? ''),
+              Row(
+                children: [
+                  const Text('                    email *  :'),
+                  Text(snapshot.data?.first?.email ?? ''),
+                ],
+              ),
+              const SizedBox(
+                height: 15,
+              ),
               Center(
-                child: TextButton(
+                child: TextButton.icon(
+                  icon: const Icon(Icons.upload),
                   onPressed: () async {
                     await Imagetakeruploader()
                         .updateimage(email: snapshot.data?.first?.email ?? '');
                   },
-                  child: const Text('upload new image'),
+                  label: const Text('upload new image'),
                   style: TextButton.styleFrom(primary: Colors.purple),
                 ),
               ),
-              TextButton(
+              TextButton.icon(
+                icon: const Icon(Icons.cancel_presentation),
                 onPressed: () async {
                   await Imagetakeruploader().deleteuserimage(
                       email: snapshot.data?.first?.email ?? '');
                 },
-                child: const Text('delete your image'),
-                style: TextButton.styleFrom(primary: Colors.purple),
-              ),
-              TextButton.icon(
-                onPressed: () {
-                  Navigator.of(context).pushNamed(chagenameview,
-                      arguments: snapshot.data?.first?.Username);
-                },
-                icon: const Icon(Icons.change_circle),
-                label: const Text('Change your name'),
+                label: const Text('delete your image'),
                 style: TextButton.styleFrom(primary: Colors.purple),
               ),
               TextButton.icon(
@@ -99,7 +105,7 @@ class _AccountviewState extends State<Accountview> {
                 },
                 icon: const Icon(Icons.logout),
                 label: const Text('Logout'),
-                style: TextButton.styleFrom(primary: Colors.purple),
+                style: TextButton.styleFrom(primary: Colors.red),
               ),
             ]),
           );

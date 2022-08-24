@@ -7,16 +7,19 @@ class Message {
   final String docid;
   final String sendername;
   final String receivername;
+  final bool? isimage;
   const Message(
       {required this.content,
       required this.timestamp,
       required this.docid,
       required this.receivername,
-      required this.sendername});
+      required this.sendername,
+      required this.isimage});
   Message.fromsnapshot(QueryDocumentSnapshot<Map<String, dynamic>> snapshot)
       : docid = snapshot.id,
         content = snapshot.data()[Content] as String,
         timestamp = snapshot.data()[tImestamp] as int,
         sendername = snapshot.data()[Sendername] as String,
-        receivername = snapshot.data()[Receivername] as String;
+        receivername = snapshot.data()[Receivername] as String,
+        isimage = snapshot.data()[Isimage] as bool?;
 }

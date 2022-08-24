@@ -50,15 +50,28 @@ class _LoginViewState extends State<LoginView> {
         const SizedBox(
           height: 50,
         ),
-        TextField(
-            controller: email,
+        Padding(
+          padding: const EdgeInsets.fromLTRB(55, 8, 55, 1),
+          child: TextField(
+              controller: email,
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'email...',
+                  labelStyle: TextStyle(color: Colors.purple))),
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(55, 8, 55, 1),
+          child: TextField(
+            controller: password,
             decoration: const InputDecoration(
-              hintText: 'email...',
-            )),
-        TextField(
-          controller: password,
-          decoration: const InputDecoration(hintText: 'Password ...'),
-          obscureText: true,
+              hintText: 'Password ...',
+              border: OutlineInputBorder(),
+            ),
+            obscureText: true,
+          ),
         ),
         const SizedBox(
           height: 25,

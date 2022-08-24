@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:chat/Chatservice/chatservice.dart';
 import 'package:chat/Chatservice/consts.dart';
+import 'package:chat/Chatservice/message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -33,6 +35,42 @@ class Imagetakeruploader {
     return downloadURL;
   }
 
+  Future<String?> uploadFileforsend(
+      {required String messagedocid, required File image}) async {
+    String downloadURL;
+
+    Reference ref = FirebaseStorage.instance
+        .ref()
+        .child("images")
+        .child(messagedocid + Timestamp.now().toString());
+
+    await ref.putFile(image);
+    downloadURL = await ref.getDownloadURL();
+
+    return downloadURL;
+  }
+
+  Future<void> sendimage(
+      {required String messagedocid,
+      required String messdocid,
+      required String sendername,
+      required String receivername}) async {
+    final image = await pickimage();
+    if (image != null) {
+      print('ok');
+      final url =
+          await uploadFileforsend(messagedocid: messdocid, image: image);
+
+      await chatservice().Sendmessage(
+        sendername: sendername,
+        receivername: receivername,
+        content: url ?? '',
+        messcollid: messdocid,
+        isimage: true,
+      );
+    }
+  }
+
   Future<void> uploadImage({required String username}) async {
     final image = await pickimage();
     if (image != null) {
@@ -50,7 +88,7 @@ class Imagetakeruploader {
   }
 
   Future<String?> getuserimage({required String email}) async {
-    return FirebaseStorage.instance
+    return await FirebaseStorage.instance
         .ref()
         .child("images")
         .child('$email')
@@ -72,6 +110,21 @@ class Imagetakeruploader {
         .child("images")
         .child('$email')
         .delete();
+  }
+
+  Future<void> deletesentimages({required String messagedocid}) async {
+    final timestamps = await FirebaseFirestore.instance
+        .collection(messagedocid)
+        .get()
+        .then((value) =>
+            value.docs.map((e) => Message.fromsnapshot(e).timestamp));
+    timestamps.forEach((element) async {
+      await FirebaseStorage.instance
+          .ref()
+          .child("images")
+          .child(messagedocid + element.toString())
+          .delete();
+    });
   }
 
   Future<String?> updateimage({required String email}) async {

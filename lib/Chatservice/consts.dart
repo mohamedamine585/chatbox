@@ -11,5 +11,5 @@ const Messagesdocid = 'messagesdocid';
 const tImestamp = 'timestamp';
 const Content = 'content';
 const Sendername = 'sendername';
-
+const Isimage = 'isimage';
 const Receivername = 'receivername';

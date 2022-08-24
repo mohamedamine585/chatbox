@@ -1,3 +1,5 @@
+import 'package:chat/Chatservice/requestsender/requestsender.dart';
+import 'package:chat/views/accountview.dart';
 import 'package:flutter/material.dart';
 
 import '../Authservice.dart/Authservice.dart';
@@ -62,22 +64,15 @@ class _chatuserviewState extends State<chatuserview> {
                   height: 25,
                 ),
                 chatservice().checkifrequestissent(
-                    username: snapshot.data?.first?.Username ?? '',
-                    useremail: snapshot.data?.first?.email,
-                    viewedname: vieweduser.Username,
-                    viewedemail: vieweduser.email),
+                  username: snapshot.data?.first?.Username ?? '',
+                  useremail: snapshot.data?.first?.email,
+                  viewedname: vieweduser.Username,
+                  viewedemail: vieweduser.email,
+                ),
               ]),
             );
           }
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('You'),
-            ),
-            body: Column(children: [
-              Text(vieweduser.Username ?? ''),
-              Text(vieweduser.email ?? ''),
-            ]),
-          );
+          return const Accountview();
         });
   }
 }

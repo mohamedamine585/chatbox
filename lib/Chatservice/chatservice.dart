@@ -1,5 +1,6 @@
 import 'package:chat/Authservice.dart/chatuser.dart';
 import 'package:chat/Chatservice/message.dart';
+import 'package:chat/imageservice/image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -29,8 +30,30 @@ class chatservice {
   }
 
   Future<void> abortfriendrequestordeletefriend(
-      {required String receivername, required String sendername}) async {
+      {required String receivername,
+      required String sendername,
+      required bool arefriends}) async {
     try {
+      if (arefriends) {
+        final viewed = await FirebaseFirestore.instance
+            .collection(receivername)
+            .where(tobefriendname, isEqualTo: sendername)
+            .get()
+            .then((value) =>
+                value.docs.map((e) => friend_ortobe.fromsnapshot(e)));
+        await Imagetakeruploader()
+            .deletesentimages(messagedocid: viewed.first.messagesdocid ?? '');
+        final allmessagesdoc = await FirebaseFirestore.instance
+            .collection(viewed.first.messagesdocid ?? '')
+            .get()
+            .then((value) => value);
+        allmessagesdoc.docs.forEach((element) async {
+          await FirebaseFirestore.instance
+              .collection(viewed.first.messagesdocid ?? '')
+              .doc(element.id)
+              .delete();
+        });
+      }
       final senderdocument = await FirebaseFirestore.instance
           .collection(receivername)
           .where(tobefriendname, isEqualTo: sendername)
@@ -135,15 +158,65 @@ class chatservice {
       {required String sendername,
       required String receivername,
       required String content,
-      required String messcollid}) async {
+      required String messcollid,
+      required bool isimage}) async {
     final Messagecollection = FirebaseFirestore.instance.collection(messcollid);
 
     await Messagecollection.add({
       Sendername: sendername,
       Receivername: receivername,
       Content: content,
+      Isimage: isimage,
       tImestamp: DateTime.now().microsecondsSinceEpoch,
     });
+  }
+
+  Future<void> deletemessage(
+      {required Timestamp, required Messagedocid}) async {
+    final doc = await FirebaseFirestore.instance
+        .collection(Messagedocid)
+        .where(tImestamp, isEqualTo: Timestamp)
+        .get()
+        .then((value) => value);
+    await FirebaseFirestore.instance
+        .collection(Messagedocid)
+        .doc(doc.docs.first.id)
+        .delete();
+  }
+
+  Widget deletemessagebar(
+      {required Timestamp,
+      required Messagedocid,
+      required BuildContext context}) {
+    return AlertDialog(
+      content: Column(
+        children: [
+          Text('Do you want to delete this message'),
+          Row(
+            children: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text(
+                    "No",
+                    style: TextStyle(color: Colors.red),
+                  )),
+              TextButton(
+                  onPressed: () async {
+                    await deletemessage(
+                        Timestamp: Timestamp, Messagedocid: Messagedocid);
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text(
+                    "Yes",
+                    style: TextStyle(color: Colors.red),
+                  )),
+            ],
+          )
+        ],
+      ),
+    );
   }
 
   Stream<Iterable<chatuser>?>? get_searched({required String? text}) {
@@ -192,14 +265,24 @@ class chatservice {
                   const Center(
                       child: Text(
                     'Friend',
-                    style: TextStyle(fontSize: 25),
+                    style: TextStyle(
+                        fontSize: 25,
+                        color: Color.fromARGB(255, 178, 100, 192)),
                   )),
+                  const SizedBox(
+                    height: 15,
+                  ),
                   TextButton(
                       onPressed: () async {
                         await chatservice().abortfriendrequestordeletefriend(
-                            receivername: username!, sendername: viewedname!);
+                            receivername: username!,
+                            sendername: viewedname!,
+                            arefriends: true);
                       },
-                      child: const Text('Delete from friend list'))
+                      child: const Text(
+                        'Unfriend',
+                        style: TextStyle(color: Colors.red),
+                      ))
                 ],
               );
             } else if (data?.data?.first.Status == 'request sender') {
@@ -220,7 +303,9 @@ class chatservice {
                   TextButton(
                       onPressed: () async {
                         await chatservice().abortfriendrequestordeletefriend(
-                            receivername: username!, sendername: viewedname!);
+                            receivername: username!,
+                            sendername: viewedname!,
+                            arefriends: false);
                       },
                       child: const Text('refuse invitation',
                           style: TextStyle(color: Colors.red))),

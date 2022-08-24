@@ -1,14 +1,18 @@
 import 'package:chat/Authservice.dart/chatuser.dart';
 import 'package:chat/Chatservice/chatservice.dart';
+import 'package:chat/Chatservice/chatuserservice.dart';
 import 'package:chat/Chatservice/consts.dart';
 import 'package:chat/Chatservice/message.dart';
 import 'package:chat/Chatservice/requestsender/requestsender.dart';
 import 'package:chat/imageservice/image.dart';
+import 'package:chat/views/consts.dart';
 import 'package:chat_bubbles/bubbles/bubble_normal.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_chat_bubble/chat_bubble.dart';
+import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_10.dart';
 
 class Chatmessages extends StatefulWidget {
   const Chatmessages({Key? key}) : super(key: key);
@@ -32,7 +36,17 @@ class _ChatmessagesState extends State<Chatmessages> {
         backgroundColor: Colors.white,
         title: Row(
           children: [
-            Imagetakeruploader().showingimage(email: friend.email, radius: 20),
+            IconButton(
+              iconSize: 30,
+              onPressed: () async {
+                final friendasuser =
+                    await chatuserservice().get_user(email: friend.email);
+                Navigator.of(context)
+                    .pushNamed(Chatuserview, arguments: friendasuser?.first);
+              },
+              icon: Imagetakeruploader()
+                  .showingimage(email: friend.email, radius: 25),
+            ),
             const SizedBox(
               width: 15,
             ),
@@ -51,35 +65,109 @@ class _ChatmessagesState extends State<Chatmessages> {
                   .getmessages(messagesdocid: friend.messagesdocid ?? ''),
               builder: ((context, snapshot) {
                 snapshot as AsyncSnapshot<Iterable<Message?>?>;
-                return Container(
-                  height: 460 - MediaQuery.of(context).viewInsets.bottom,
-                  child: ListView.builder(
-                      reverse: true,
-                      itemCount: snapshot.data?.length,
-                      itemBuilder: ((context, index) {
-                        if (snapshot.data!.isNotEmpty) {
-                          if (snapshot.data!.first!.content != null) {
-                            return ListTile(
-                              onLongPress: () {},
-                              title: BubbleNormal(
-                                text: snapshot.data!.elementAt(index)!.content,
-                                color: getbubblecolor(
-                                    test: snapshot.data
+                if (snapshot.hasData) {
+                  return Container(
+                    height: 460 - MediaQuery.of(context).viewInsets.bottom,
+                    child: ListView.builder(
+                        itemCount: snapshot.data?.length,
+                        reverse: true,
+                        itemBuilder: ((context, index) {
+                          if (snapshot.data!.isNotEmpty) {
+                            if (snapshot.data!.elementAt(index)!.content !=
+                                '') {
+                              if (snapshot.data?.elementAt(index)?.isimage ==
+                                      false ||
+                                  snapshot.data?.elementAt(index)?.isimage ==
+                                      null) {
+                                return ListTile(
+                                  title: BubbleNormal(
+                                    text: snapshot.data!
+                                        .elementAt(index)!
+                                        .content,
+                                    color: getbubblecolor(
+                                        test: snapshot.data
+                                                ?.elementAt(index)
+                                                ?.sendername ==
+                                            user.Username),
+                                    isSender: snapshot.data
                                             ?.elementAt(index)
                                             ?.sendername ==
-                                        user.Username),
-                                isSender: snapshot.data
-                                        ?.elementAt(index)
-                                        ?.sendername ==
-                                    user.Username,
-                              ),
-                            );
+                                        user.Username,
+                                  ),
+                                );
+                              }
+                              return Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      SizedBox(
+                                        width: seekwidth(
+                                            issender: snapshot.data
+                                                    ?.elementAt(index)
+                                                    ?.sendername ==
+                                                user.Username),
+                                      ),
+                                      Container(
+                                        child: GestureDetector(
+                                          onTap: (() {
+                                            Navigator.of(context).pushNamed(
+                                                showimageview,
+                                                arguments: snapshot.data
+                                                    ?.elementAt(index)
+                                                    ?.content);
+                                          }),
+                                          child: (Image(
+                                              loadingBuilder: ((context, child,
+                                                  loadingProgress) {
+                                                return loadingProgress == null
+                                                    ? child
+                                                    : Row(
+                                                        children: [
+                                                          const SizedBox(
+                                                            width: 35,
+                                                          ),
+                                                          Container(
+                                                            height: 80,
+                                                            width: 50,
+                                                            child: const Center(
+                                                              child:
+                                                                  CircularProgressIndicator(
+                                                                color: Colors
+                                                                    .purple,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      );
+                                              }),
+                                              width: 250,
+                                              height: 200,
+                                              image: NetworkImage(snapshot.data
+                                                      ?.elementAt(index)
+                                                      ?.content ??
+                                                  ''))),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  )
+                                ],
+                              );
+                            }
                           }
-                        }
-                        return const Center(
-                          child: Text('No messages'),
-                        );
-                      })),
+                          return const Center(
+                            child: Text('No messages'),
+                          );
+                        })),
+                  );
+                }
+                return Container(
+                  color: Colors.white,
+                  child: const Center(
+                    child: Text('No messages'),
+                  ),
                 );
               })),
           MessageBar(
@@ -88,7 +176,8 @@ class _ChatmessagesState extends State<Chatmessages> {
                   sendername: user.Username ?? '',
                   receivername: friend.name ?? '',
                   content: message,
-                  messcollid: friend.messagesdocid ?? '');
+                  messcollid: friend.messagesdocid ?? '',
+                  isimage: false);
             },
             sendButtonColor: Colors.purple,
             actions: [
@@ -108,7 +197,20 @@ class _ChatmessagesState extends State<Chatmessages> {
                     color: Colors.purple,
                     size: 24,
                   ),
-                  onTap: () {},
+                  onTap: () async {
+                    final image = await Imagetakeruploader().pickimage();
+                    if (image != null) {
+                      final url = await Imagetakeruploader().uploadFileforsend(
+                          messagedocid: friend.messagesdocid ?? '',
+                          image: image);
+                      await chatservice().Sendmessage(
+                          sendername: user.Username ?? '',
+                          receivername: friend.name ?? '',
+                          content: url ?? '',
+                          messcollid: friend.messagesdocid ?? '',
+                          isimage: true);
+                    }
+                  },
                 ),
               ),
             ],
@@ -117,6 +219,13 @@ class _ChatmessagesState extends State<Chatmessages> {
       ),
     );
   }
+}
+
+double seekwidth({required bool issender}) {
+  if (issender) {
+    return 95;
+  }
+  return 0;
 }
 
 Color getbubblecolor({required bool test}) {

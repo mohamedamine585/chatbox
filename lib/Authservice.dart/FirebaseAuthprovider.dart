@@ -1,8 +1,14 @@
+import 'package:chat/Authservice.dart/Authservice.dart';
 import 'package:chat/Authservice.dart/Authuser.dart';
+import 'package:chat/Chatservice/chatservice.dart';
+import 'package:chat/Chatservice/chatuserservice.dart';
+import 'package:chat/Chatservice/consts.dart';
+import 'package:chat/Useful-functions.dart';
 import 'package:chat/firebase_options.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'Authprovider.dart';
 
@@ -15,13 +21,20 @@ class Firebaseauthprovider implements Authprovider {
   }
 
   @override
-  Future<Authuser?> login(
-      {required String? email, required String? password}) async {
+  Future<Authuser?> loginwithemail(
+      {required String? email,
+      required String? password,
+      required BuildContext context}) async {
     if (email != '' && password != '') {
       try {
         await FirebaseAuth.instance.signInWithEmailAndPassword(
             email: email ?? '', password: password ?? '');
       } on FirebaseAuthException catch (e) {
+        await showerrordialog(
+            context: context,
+            title: 'Error',
+            text: e.message ?? '',
+            keybutton: 'Ok');
         return null;
       }
       return Authuser(email ?? '');
@@ -39,12 +52,38 @@ class Firebaseauthprovider implements Authprovider {
 
   @override
   Future<Authuser?> register(
-      {required String email, required String password}) async {
-    try {
-      await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: email, password: password);
-    } catch (e) {
-      print(e);
+      {required String Username,
+      required String email,
+      required String password,
+      required BuildContext context}) async {
+    final all_users_with_that_name =
+        await chatuserservice().get_user_byUsername(Username: Username);
+
+    if (all_users_with_that_name != null) {
+      try {
+        await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(email: email, password: password);
+      } catch (e) {
+        await showerrordialog(
+            context: context,
+            title: 'Error',
+            text: e.toString(),
+            keybutton: "Ok");
+        return null;
+      }
+      return Authuser(email);
+    } else if (Username == '') {
+      await showerrordialog(
+          context: context,
+          title: 'Error',
+          text: 'Invalid username',
+          keybutton: 'Ok');
+    } else {
+      await showerrordialog(
+          context: context,
+          title: 'Error',
+          text: 'Invalid Username',
+          keybutton: 'Ok');
     }
     return null;
   }
@@ -64,5 +103,29 @@ class Firebaseauthprovider implements Authprovider {
     try {
       await FirebaseAuth.instance.currentUser?.updatePassword(newpassord);
     } catch (e) {}
+  }
+
+  @override
+  Future<Authuser?> loginwithusername(
+      {required String Username,
+      required String password,
+      required BuildContext context}) async {
+    final userincloud =
+        await chatuserservice().get_user_byUsername(Username: Username);
+    print(userincloud);
+    try {
+      if (userincloud!.isNotEmpty) {
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: userincloud.first?.email ?? '', password: password);
+      }
+    } catch (e) {
+      await showerrordialog(
+          context: context,
+          title: 'Error',
+          text: e.toString(),
+          keybutton: 'Ok');
+      return null;
+    }
+    return Authuser(userincloud.first?.email ?? '');
   }
 }

@@ -150,8 +150,11 @@ class Imagetakeruploader {
         if (first != null) {
           return CircleAvatar(
             backgroundColor: Colors.grey,
-            backgroundImage:
-                NetworkImage(first.data?.first?.photourl ?? standardimageurl),
+            backgroundImage: NetworkImage(
+                (first.data?.first?.photourl == null ||
+                        first.data?.first?.photourl == '')
+                    ? standardimageurl
+                    : first.data?.first?.photourl ?? ''),
             radius: radius,
           );
         }

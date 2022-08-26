@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:chat/Authservice.dart/chatuser.dart';
 import 'package:chat/Chatservice/chatuserservice.dart';
+import 'package:chat/Useful-functions.dart';
 import 'package:chat/views/consts.dart';
 import 'package:flutter/material.dart';
 
@@ -71,37 +72,44 @@ class _AccountviewState extends State<Accountview> {
               ),
               Center(
                 child: TextButton.icon(
-                  icon: const Icon(Icons.upload),
-                  onPressed: () async {
-                    await Imagetakeruploader()
-                        .updateimage(email: snapshot.data?.first?.email ?? '');
+                  icon: const Icon(Icons.person),
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(profileview,
+                        arguments: snapshot.data?.first);
                   },
-                  label: const Text('upload new image'),
+                  label: const Text('Profile'),
                   style: TextButton.styleFrom(primary: Colors.purple),
                 ),
               ),
               TextButton.icon(
-                icon: const Icon(Icons.cancel_presentation),
-                onPressed: () async {
-                  await Imagetakeruploader().deleteuserimage(
-                      email: snapshot.data?.first?.email ?? '');
+                icon: const Icon(Icons.security),
+                onPressed: () {
+                  Navigator.of(context).pushNamed(privacyview);
                 },
-                label: const Text('delete your image'),
+                label: const Text('Privacy & Security'),
                 style: TextButton.styleFrom(primary: Colors.purple),
               ),
               TextButton.icon(
                 onPressed: () {
-                  chatuserservice().showchangepassworddialog(context: context);
+                  Navigator.of(context).pushNamed(privacyview);
                 },
-                icon: const Icon(Icons.password),
-                label: const Text('Change your password'),
+                icon: const Icon(Icons.settings),
+                label: const Text('Account Settings'),
                 style: TextButton.styleFrom(primary: Colors.purple),
               ),
               TextButton.icon(
                 onPressed: () async {
-                  await Authservice.firebase().logout();
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil(loginview, (route) => false);
+                  final shouldlogout = await showgenericdialog(
+                      context: context,
+                      title: 'Log out',
+                      text: 'Do you want to log out ?',
+                      truekeybutton: 'Yes',
+                      falsekeybutton: 'Cancel');
+                  if (shouldlogout ?? false) {
+                    await Authservice.firebase().logout();
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil(loginswitch, (route) => false);
+                  }
                 },
                 icon: const Icon(Icons.logout),
                 label: const Text('Logout'),

@@ -7,15 +7,20 @@ class chatuser {
   final String? Username;
   final String? email;
   final String? photourl;
-
-  const chatuser(
+  final String? hashedpassword;
+  int? onnotbadge;
+  chatuser(
       {required this.Username,
       required this.email,
       required this.photourl,
-      required this.docid});
+      required this.docid,
+      required this.hashedpassword,
+      this.onnotbadge});
   chatuser.fromsnapshot(QueryDocumentSnapshot<Map<String, dynamic>> snapshot)
       : docid = snapshot.id,
         email = snapshot.data()[chatuser_email] as String?,
         Username = snapshot.data()[chatuser_name] as String?,
-        photourl = snapshot.data()[userphotourl] as String?;
+        hashedpassword = snapshot.data()[Hashedpassword] as String?,
+        photourl = snapshot.data()[userphotourl] as String?,
+        onnotbadge = snapshot.data()[Onnotbadge] as int?;
 }

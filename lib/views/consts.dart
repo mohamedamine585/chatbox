@@ -1,3 +1,6 @@
+import 'package:chat/views/Loginchoice.dart';
+import 'package:chat/views/Loginview.dart';
+
 const registerview = 'Registerview';
 const loginview = 'Loginview';
 const homeview = 'homeview';
@@ -11,3 +14,7 @@ const chat_bubble_url =
 const chagenameview = 'changenameview';
 const chatview = 'chatview';
 const showimageview = 'showimageview';
+const loginviewwithname = 'loginviewwithname';
+const loginswitch = 'loginswitch';
+const profileview = 'profileview';
+const privacyview = 'privacyview';

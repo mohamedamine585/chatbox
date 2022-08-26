@@ -31,12 +31,14 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.purple),
         elevation: 0,
         title: Row(
           children: const [
             SizedBox(
-              width: 130,
+              width: 70,
             ),
             Text(
               'Log in',
@@ -77,26 +79,32 @@ class _LoginViewState extends State<LoginView> {
           height: 25,
         ),
         TextButton(
+            style: TextButton.styleFrom(backgroundColor: Colors.purple),
             onPressed: () async {
-              final user = await Authservice.firebase()
-                  .login(email: email.text, password: password.text);
+              try {
+                final user = await Authservice.firebase().loginwithemail(
+                    email: email.text,
+                    password: password.text,
+                    context: context);
 
-              if (user?.email != '') {
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil(homeview, (route) => false);
-              }
+                if (user != null) {
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil(homeview, (route) => false);
+                }
+              } catch (e) {}
             },
             child: const Text(
               'Log in',
-              style: TextStyle(color: Colors.purple),
+              style: TextStyle(color: Colors.white),
             )),
         TextButton(
+            style: TextButton.styleFrom(backgroundColor: Colors.purple),
             onPressed: () {
               Navigator.of(context)
                   .pushNamedAndRemoveUntil(registerview, (route) => false);
             },
             child: const Text("I haven't an account",
-                style: TextStyle(color: Colors.purple))),
+                style: TextStyle(color: Colors.white))),
       ]),
     );
   }

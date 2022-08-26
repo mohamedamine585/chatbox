@@ -18,9 +18,16 @@ class Authservice implements Authprovider {
   }
 
   @override
-  Future<Authuser?> login(
-      {required String? email, required String? password}) async {
-    return await provider.login(email: email ?? '', password: password ?? '');
+  Future<Authuser?> loginwithemail(
+      {required String? email,
+      required String? password,
+      required BuildContext context}) async {
+    try {
+      return await provider.loginwithemail(
+          email: email ?? '', password: password ?? '', context: context);
+    } catch (e) {
+      return null;
+    }
   }
 
   @override
@@ -30,9 +37,12 @@ class Authservice implements Authprovider {
 
   @override
   Future<Authuser?> register(
-      {required String email, required String password}) async {
-    await provider.register(email: email, password: password);
-    return Authuser(email);
+      {required String Username,
+      required String email,
+      required String password,
+      required BuildContext context}) async {
+    return await provider.register(
+        Username: Username, email: email, password: password, context: context);
   }
 
   @override
@@ -43,5 +53,18 @@ class Authservice implements Authprovider {
   @override
   Future<void> changepassword({required String newpassord}) async {
     await provider.changepassword(newpassord: newpassord);
+  }
+
+  @override
+  Future<Authuser?> loginwithusername(
+      {required String Username,
+      required String password,
+      required BuildContext context}) async {
+    try {
+      return await provider.loginwithusername(
+          Username: Username, password: password, context: context);
+    } catch (e) {
+      return null;
+    }
   }
 }

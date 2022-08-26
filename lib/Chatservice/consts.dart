@@ -13,3 +13,5 @@ const Content = 'content';
 const Sendername = 'sendername';
 const Isimage = 'isimage';
 const Receivername = 'receivername';
+const Hashedpassword = 'hashedpassword';
+const Onnotbadge = 'onnotbadge';

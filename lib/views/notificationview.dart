@@ -1,3 +1,4 @@
+import 'package:chat/Useful-functions.dart';
 import 'package:flutter/material.dart';
 
 import '../Chatservice/chatservice.dart';
@@ -40,24 +41,37 @@ class _NotificationsviewState extends State<Notificationsview> {
             ),
             builder: ((context, snapshot) {
               final data = snapshot as AsyncSnapshot<Iterable<friend_ortobe?>?>;
+              print(data.data?.length);
               if (data.data?.isNotEmpty ?? false) {
-                return ListView.builder(
-                    itemCount: snapshot.data?.length,
-                    itemBuilder: ((context, index) {
-                      final friend = snapshot.data?.elementAt(index);
-                      return ListTile(
-                        leading: Imagetakeruploader()
-                            .showingimage(email: friend?.email, radius: 20),
-                        title: Text('${friend?.name}'),
-                        trailing: IconButton(
-                            onPressed: () async {
-                              await chatservice().acceptrfriendrequest(
-                                  username: username,
-                                  friendname: friend?.name ?? '');
-                            },
-                            icon: const Icon(Icons.check)),
-                      );
-                    }));
+                return FutureBuilder(
+                    future: chatuserservice().addbadgenot(
+                        Username: username, newbadgenot: snapshot.data!.length),
+                    builder: (context, snapshot1) {
+                      return ListView.builder(
+                          itemCount: snapshot.data?.length,
+                          itemBuilder: ((context, index) {
+                            final friend = snapshot.data?.elementAt(index);
+                            return ListTile(
+                              leading: Imagetakeruploader().showingimage(
+                                  email: friend?.email, radius: 20),
+                              title: Text('${friend?.name}'),
+                              trailing: IconButton(
+                                  onPressed: () async {
+                                    final shouldaccept = await showgenericdialog(
+                                        context: context,
+                                        title: 'Accept invitaion',
+                                        text:
+                                            ' ${snapshot.data?.elementAt(index)?.name} will be able to chat with you',
+                                        truekeybutton: 'Accept',
+                                        falsekeybutton: 'Deny');
+                                    await chatservice().acceptrfriendrequest(
+                                        username: username,
+                                        friendname: friend?.name ?? '');
+                                  },
+                                  icon: const Icon(Icons.check)),
+                            );
+                          }));
+                    });
               }
 
               return const Scaffold(

@@ -67,6 +67,7 @@ class _ChatmessagesState extends State<Chatmessages> {
                 snapshot as AsyncSnapshot<Iterable<Message?>?>;
                 if (snapshot.hasData) {
                   return Container(
+                    width: 400,
                     height: 460 - MediaQuery.of(context).viewInsets.bottom,
                     child: ListView.builder(
                         itemCount: snapshot.data?.length,
@@ -116,36 +117,47 @@ class _ChatmessagesState extends State<Chatmessages> {
                                                     ?.elementAt(index)
                                                     ?.content);
                                           }),
-                                          child: (Image(
-                                              loadingBuilder: ((context, child,
-                                                  loadingProgress) {
-                                                return loadingProgress == null
-                                                    ? child
-                                                    : Row(
-                                                        children: [
-                                                          const SizedBox(
-                                                            width: 35,
-                                                          ),
-                                                          Container(
-                                                            height: 80,
-                                                            width: 50,
-                                                            child: const Center(
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            child: (Image(
+                                                errorBuilder: ((context, error,
+                                                    stackTrace) {
+                                                  return const Text(
+                                                      'Can not  load image');
+                                                }),
+                                                loadingBuilder: ((context,
+                                                    child, loadingProgress) {
+                                                  return loadingProgress == null
+                                                      ? child
+                                                      : Row(
+                                                          children: [
+                                                            const SizedBox(
+                                                              width: 35,
+                                                            ),
+                                                            Container(
+                                                              height: 80,
+                                                              width: 50,
                                                               child:
-                                                                  CircularProgressIndicator(
-                                                                color: Colors
-                                                                    .purple,
+                                                                  const Center(
+                                                                child:
+                                                                    CircularProgressIndicator(
+                                                                  color: Colors
+                                                                      .purple,
+                                                                ),
                                                               ),
                                                             ),
-                                                          ),
-                                                        ],
-                                                      );
-                                              }),
-                                              width: 250,
-                                              height: 200,
-                                              image: NetworkImage(snapshot.data
-                                                      ?.elementAt(index)
-                                                      ?.content ??
-                                                  ''))),
+                                                          ],
+                                                        );
+                                                }),
+                                                width: 250,
+                                                height: 200,
+                                                image: NetworkImage(snapshot
+                                                        .data
+                                                        ?.elementAt(index)
+                                                        ?.content ??
+                                                    ''))),
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -223,7 +235,7 @@ class _ChatmessagesState extends State<Chatmessages> {
 
 double seekwidth({required bool issender}) {
   if (issender) {
-    return 95;
+    return 105;
   }
   return 0;
 }

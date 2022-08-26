@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:chat/Authservice.dart/Authservice.dart';
 import 'package:chat/Authservice.dart/chatuser.dart';
 import 'package:chat/Chatservice/consts.dart';
 import 'package:chat/Chatservice/requestsender/requestsender.dart';
+import 'package:chat/Useful-functions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
@@ -26,22 +30,153 @@ class chatuserservice {
     }
   }
 
+  Future<Iterable<chatuser?>?> get_user_byUsername(
+      {required String? Username}) async {
+    try {
+      if (Username != '') {
+        return await users
+            .where(
+              chatuser_name,
+              isEqualTo: Username,
+            )
+            .get()
+            .then(
+                (value) => value.docs.map((doc) => chatuser.fromsnapshot(doc)));
+      }
+      return null;
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  Future<void> delete_account(
+      {required String username, required String password}) async {
+    final user = (await get_user_byUsername(Username: username))?.single;
+    if (user?.hashedpassword ==
+        sha1.convert(utf8.encode(password)).toString()) {
+      final docinusers = (await FirebaseFirestore.instance
+              .collection('users')
+              .where(chatuser_name, isEqualTo: username)
+              .get()
+              .then((value) => value))
+          .docs
+          .single;
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(docinusers.id)
+          .delete();
+      (await FirebaseFirestore.instance
+              .collection(username)
+              .get()
+              .then((value) => value))
+          .docs
+          .forEach((element) async {
+        final e = friend_ortobe.fromsnapshot(element);
+        if (e.name != '' && e.name != null) {
+          final hisdoc = await FirebaseFirestore.instance
+              .collection(e.name!)
+              .where(tobefriendname, isEqualTo: username)
+              .get()
+              .then((value) => value);
+          await FirebaseFirestore.instance
+              .collection(e.name ?? '')
+              .doc(hisdoc.docs.single.id)
+              .delete();
+
+          await FirebaseFirestore.instance
+              .collection(username)
+              .doc(element.id)
+              .delete();
+        }
+      });
+
+      await FirebaseFirestore.instance
+          .collection(username)
+          .doc(docinusers.id)
+          .delete();
+    }
+  }
+
+  Future<chatuser?> login_user(
+      {required String username,
+      required String password,
+      required BuildContext context}) async {
+    final user = await get_user_byUsername(Username: username);
+    final enteredpasswordhashed = sha1.convert(utf8.encode(password));
+    if (user!.isNotEmpty) {
+      if (enteredpasswordhashed.toString() == user.single?.hashedpassword) {
+        return chatuser(
+            Username: username,
+            email: user.single?.email,
+            photourl: user.single?.photourl,
+            docid: user.single!.docid,
+            hashedpassword: enteredpasswordhashed.toString());
+      }
+      await showerrordialog(
+          context: context,
+          title: 'Error',
+          text: 'Wrong Password',
+          keybutton: 'Ok');
+      return null;
+    }
+
+    await showerrordialog(
+        context: context,
+        title: 'Error',
+        text: 'User not found',
+        keybutton: 'Ok');
+    return null;
+  }
+
   Future<chatuser?> create_user(
-      {required String email,
+      {required String? email,
       required String name,
-      required String photourl}) async {
-    final document = await users.add({
-      chatuser_email: email,
-      chatuser_name: name,
-      userphotourl: photourl,
-    });
-    await FirebaseFirestore.instance.collection(name).add({});
-    return chatuser(
-      docid: document.id,
-      Username: name,
-      email: email,
-      photourl: userphotourl,
-    );
+      required String? photourl,
+      required String password,
+      required BuildContext context}) async {
+    if (password.isEmpty) {
+      await showerrordialog(
+          context: context,
+          title: 'Error',
+          text: 'The password is invalid',
+          keybutton: 'Ok');
+
+      return null;
+    } else if (name.isEmpty) {
+      await showerrordialog(
+          context: context,
+          title: 'Error',
+          text: 'The name is invalid',
+          keybutton: 'Ok');
+
+      return null;
+    } else {
+      final alluserswiththatname = await get_user_byUsername(Username: name);
+
+      if (alluserswiththatname?.isNotEmpty ?? false) {
+        await showerrordialog(
+            context: context,
+            title: 'Error',
+            text: 'This username is already in use',
+            keybutton: 'Got it');
+        return null;
+      }
+      final bytes = utf8.encode(password);
+      final hashedpassword = sha1.convert(bytes);
+      final document = await users.add({
+        chatuser_email: email,
+        chatuser_name: name,
+        userphotourl: photourl,
+      });
+      await FirebaseFirestore.instance.collection(name).add({});
+      return chatuser(
+          docid: document.id,
+          Username: name,
+          email: email,
+          photourl: userphotourl,
+          hashedpassword: hashedpassword.toString());
+    }
   }
 
   Stream<Iterable<chatuser?>?> getallusers({required String email}) {
@@ -56,6 +191,19 @@ class chatuserservice {
         (event) => event.docs
             .map((e) => friend_ortobe.fromsnapshot(e))
             .where((element) => element.Status == 'friend'));
+  }
+
+  Future<void> addbadgenot(
+      {required String Username, required int newbadgenot}) async {
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .where(chatuser_name, isEqualTo: Username)
+        .get()
+        .then((value) => value);
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(doc.docs.first.id)
+        .update({Onnotbadge: newbadgenot});
   }
 
   Stream<Iterable<friend_ortobe?>?> getrequestsenders(
@@ -209,9 +357,10 @@ class _changingpasswordState extends State<changingpassword> {
       ),
       TextButton(
           onPressed: () async {
-            final user = await Authservice.firebase().login(
+            final user = await Authservice.firebase().loginwithemail(
                 email: Authservice.firebase().getcurrentuser()?.email,
-                password: oldpassword.text);
+                password: oldpassword.text,
+                context: context);
             if (user == null)
               print('no');
             else {

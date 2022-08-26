@@ -12,16 +12,15 @@ class _FirstviewState extends State<Firstview> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Center(
-          child: const Text('ChatBox',
-              style: TextStyle(color: Colors.purple, fontSize: 40)),
-        ),
-        elevation: 0,
-        backgroundColor: Colors.white,
-      ),
       body: Center(
         child: Column(children: [
+          const SizedBox(
+            height: 100,
+          ),
+          const Center(
+            child: const Text('Stream',
+                style: TextStyle(color: Colors.purple, fontSize: 40)),
+          ),
           const SizedBox(
             height: 100,
           ),
@@ -32,7 +31,7 @@ class _FirstviewState extends State<Firstview> {
           TextButton(
               onPressed: () {
                 Navigator.of(context)
-                    .pushNamedAndRemoveUntil(loginview, (route) => false);
+                    .pushNamedAndRemoveUntil(loginswitch, (route) => false);
               },
               child:
                   const Text('Log in', style: TextStyle(color: Colors.purple))),
@@ -46,7 +45,7 @@ class _FirstviewState extends State<Firstview> {
                 style: TextStyle(color: Colors.purple),
               )),
           const SizedBox(
-            height: 80,
+            height: 22,
             width: 80,
           ),
           Row(

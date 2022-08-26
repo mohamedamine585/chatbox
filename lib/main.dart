@@ -1,9 +1,13 @@
 import 'package:chat/views/Chatview.dart';
+import 'package:chat/views/Loginchoice.dart';
 import 'package:chat/views/Loginview.dart';
+import 'package:chat/views/Privacyview.dart';
+import 'package:chat/views/Profileview.dart';
 import 'package:chat/views/accountview.dart';
 import 'package:chat/views/changenameview.dart';
 import 'package:chat/views/chatboxview.dart';
 import 'package:chat/views/chatuserview.dart';
+import 'package:chat/views/loginwithname.dart';
 import 'package:chat/views/myapp.dart';
 import 'package:chat/views/notificationview.dart';
 import 'package:chat/views/showimageview.dart';
@@ -24,6 +28,10 @@ void main() {
         'Notificationsview': (((context) => const Notificationsview())),
         'changenameview': (((context) => const Changenameview())),
         'chatview': ((context) => const Chatmessages()),
-        'showimageview': ((context) => const showimage())
+        'showimageview': ((context) => const showimage()),
+        'loginswitch': ((context) => const Loginswitch()),
+        'loginviewwithname': ((context) => const Loginwithname()),
+        'profileview': ((context) => const Profileview()),
+        'privacyview': ((context) => const Privacyview())
       }));
 }

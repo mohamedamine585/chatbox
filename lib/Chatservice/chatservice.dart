@@ -1,5 +1,6 @@
 import 'package:chat/Authservice.dart/chatuser.dart';
 import 'package:chat/Chatservice/message.dart';
+import 'package:chat/Useful-functions.dart';
 import 'package:chat/imageservice/image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -41,8 +42,7 @@ class chatservice {
             .get()
             .then((value) =>
                 value.docs.map((e) => friend_ortobe.fromsnapshot(e)));
-        await Imagetakeruploader()
-            .deletesentimages(messagedocid: viewed.first.messagesdocid ?? '');
+
         final allmessagesdoc = await FirebaseFirestore.instance
             .collection(viewed.first.messagesdocid ?? '')
             .get()
@@ -220,23 +220,24 @@ class chatservice {
   }
 
   Stream<Iterable<chatuser>?>? get_searched({required String? text}) {
-    if (text != null) {
+    if (text != null && text != '') {
       return FirebaseFirestore.instance.collection('users').snapshots().map(
           (event) => event.docs.map((e) => chatuser.fromsnapshot(e)).where(
               (element) => (element.Username?.contains(text) ??
-                  element.Username != null)));
+                  element.Username != '')));
     }
     return FirebaseFirestore.instance.collection('users').snapshots().map(
         (event) => event.docs
             .map((e) => chatuser.fromsnapshot(e))
-            .where((element) => element != null));
+            .where((element) => element.Username != ''));
   }
 
   Widget checkifrequestissent(
       {required String? username,
       required String? useremail,
       required String? viewedname,
-      required String? viewedemail}) {
+      required String? viewedemail,
+      required BuildContext context}) {
     return StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection(username ?? '')
@@ -274,10 +275,19 @@ class chatservice {
                   ),
                   TextButton(
                       onPressed: () async {
-                        await chatservice().abortfriendrequestordeletefriend(
-                            receivername: username!,
-                            sendername: viewedname!,
-                            arefriends: true);
+                        final shouldunfriend = await showgenericdialog(
+                            context: context,
+                            title: 'Unfriend $viewedname ?',
+                            text:
+                                "You won't be able to chat with $viewedname  and your conversation with him will be deleted",
+                            truekeybutton: 'Unfriend',
+                            falsekeybutton: 'Cancel');
+                        if (shouldunfriend ?? false) {
+                          await chatservice().abortfriendrequestordeletefriend(
+                              receivername: username!,
+                              sendername: viewedname!,
+                              arefriends: true);
+                        }
                       },
                       child: const Text(
                         'Unfriend',

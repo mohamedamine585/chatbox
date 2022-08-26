@@ -43,8 +43,8 @@ Future<bool?> showgenericdialog({
     builder: ((context) {
       return AlertDialog(
         backgroundColor: const Color.fromARGB(255, 240, 233, 233),
-        title: const Text(
-          'Error',
+        title: Text(
+          title,
           style: TextStyle(color: Colors.purple),
         ),
         content: Text(text),

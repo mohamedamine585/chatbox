@@ -1,3 +1,4 @@
+import 'package:chat/Useful-functions.dart';
 import 'package:flutter/material.dart';
 
 import '../Authservice.dart/Authservice.dart';
@@ -15,6 +16,7 @@ class _RegisterViewState extends State<RegisterView> {
   @override
   late final TextEditingController email;
   late final TextEditingController password;
+  late final TextEditingController confirmpassword;
 
   late final TextEditingController name;
   @override
@@ -22,11 +24,13 @@ class _RegisterViewState extends State<RegisterView> {
     email = TextEditingController();
     password = TextEditingController();
     name = TextEditingController();
+    confirmpassword = TextEditingController();
     super.initState();
   }
 
   @override
   void dispose() {
+    confirmpassword.dispose();
     email.dispose();
     name.dispose();
     password.dispose();
@@ -35,13 +39,16 @@ class _RegisterViewState extends State<RegisterView> {
 
   @override
   Widget build(BuildContext context) {
+    var invalid = true;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
         title: Row(
           children: const [
             SizedBox(
-              width: 120,
+              width: 110,
             ),
             Text(
               'Register',
@@ -54,51 +61,96 @@ class _RegisterViewState extends State<RegisterView> {
       body: Column(
         children: [
           const SizedBox(
-            height: 100,
+            height: 50,
           ),
-          TextField(
-            controller: name,
-            decoration: const InputDecoration(
-              hintText: ' Username...',
+          Padding(
+            padding: const EdgeInsets.fromLTRB(55, 8, 55, 1),
+            child: TextField(
+              controller: name,
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Username...',
+                  labelStyle: TextStyle(color: Colors.purple)),
             ),
           ),
-          TextField(
-            controller: email,
-            decoration: const InputDecoration(hintText: 'email...'),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(55, 8, 55, 1),
+            child: TextField(
+              controller: email,
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'email...',
+                  labelStyle: TextStyle(color: Colors.purple)),
+            ),
           ),
-          TextField(
-            controller: password,
-            decoration: const InputDecoration(hintText: 'password...'),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(55, 8, 55, 1),
+            child: TextField(
+              obscureText: true,
+              controller: password,
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'password...',
+                  labelStyle: TextStyle(color: Colors.purple)),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(55, 8, 55, 1),
+            child: TextField(
+              obscureText: true,
+              controller: confirmpassword,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'confirm password...',
+                  labelStyle: TextStyle(color: Colors.purple)),
+            ),
           ),
           const SizedBox(
             height: 20,
           ),
           TextButton(
+              style: TextButton.styleFrom(backgroundColor: Colors.purple),
               onPressed: () async {
-                final user = await Authservice.firebase()
-                    .register(email: email.text, password: password.text);
-                if (user != null) {
-                  await chatuserservice().create_user(
-                      email: email.text, name: name.text, photourl: '');
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil(homeview, (route) => false);
+                if (password.text == confirmpassword.text) {
+                  final user = await Authservice.firebase().register(
+                      Username: name.text,
+                      email: email.text,
+                      password: password.text,
+                      context: context);
+                  print('$user  /////////////');
+                  if (user != null) {
+                    await chatuserservice().create_user(
+                        email: email.text,
+                        name: name.text,
+                        photourl: '',
+                        password: password.text,
+                        context: context);
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil(homeview, (route) => false);
+                  }
+                } else {
+                  await showerrordialog(
+                      context: context,
+                      title: 'Error',
+                      text: "Password isn't confirmed",
+                      keybutton: 'Ok');
                 }
               },
               child: const Text(
                 'Register',
-                style: TextStyle(color: Colors.purple),
+                style: TextStyle(color: Colors.white),
               )),
           TextButton(
-              onPressed: () {
+              onPressed: () async {
                 Navigator.of(context)
-                    .pushNamedAndRemoveUntil(loginview, (route) => false);
+                    .pushNamedAndRemoveUntil(loginswitch, (route) => false);
               },
               child: const Text(
                 'I already have an account',
                 style: TextStyle(color: Colors.purple),
               )),
           const SizedBox(
-            height: 100,
+            height: 35,
             width: 80,
           ),
           Row(

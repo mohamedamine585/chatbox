@@ -64,11 +64,11 @@ class _chatuserviewState extends State<chatuserview> {
                   height: 25,
                 ),
                 chatservice().checkifrequestissent(
-                  username: snapshot.data?.first?.Username ?? '',
-                  useremail: snapshot.data?.first?.email,
-                  viewedname: vieweduser.Username,
-                  viewedemail: vieweduser.email,
-                ),
+                    username: snapshot.data?.first?.Username ?? '',
+                    useremail: snapshot.data?.first?.email,
+                    viewedname: vieweduser.Username,
+                    viewedemail: vieweduser.email,
+                    context: context),
               ]),
             );
           }

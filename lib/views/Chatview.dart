@@ -4,6 +4,7 @@ import 'package:chat/Chatservice/chatuserservice.dart';
 import 'package:chat/Chatservice/consts.dart';
 import 'package:chat/Chatservice/message.dart';
 import 'package:chat/Chatservice/requestsender/requestsender.dart';
+import 'package:chat/Useful-functions.dart';
 import 'package:chat/imageservice/image.dart';
 import 'package:chat/views/consts.dart';
 import 'package:chat_bubbles/bubbles/bubble_normal.dart';
@@ -73,6 +74,9 @@ class _ChatmessagesState extends State<Chatmessages> {
                         itemCount: snapshot.data?.length,
                         reverse: true,
                         itemBuilder: ((context, index) {
+                          final date = DateTime.fromMillisecondsSinceEpoch(
+                              snapshot.data!.elementAt(index)!.timestamp);
+
                           if (snapshot.data!.isNotEmpty) {
                             if (snapshot.data!.elementAt(index)!.content !=
                                 '') {
@@ -81,6 +85,22 @@ class _ChatmessagesState extends State<Chatmessages> {
                                   snapshot.data?.elementAt(index)?.isimage ==
                                       null) {
                                 return ListTile(
+                                  onLongPress: () async {
+                                    if (await showgenericdialog(
+                                            context: context,
+                                            title: 'Delete message',
+                                            text:
+                                                'Do you want to delete this message',
+                                            truekeybutton: 'Yes',
+                                            falsekeybutton: 'No') ??
+                                        false) {
+                                      await chatservice().deletemessage(
+                                          Timestamp: snapshot.data
+                                              ?.elementAt(index)
+                                              ?.timestamp,
+                                          Messagedocid: friend.messagesdocid);
+                                    }
+                                  },
                                   title: BubbleNormal(
                                     text: snapshot.data!
                                         .elementAt(index)!
@@ -175,9 +195,9 @@ class _ChatmessagesState extends State<Chatmessages> {
                         })),
                   );
                 }
-                return Container(
-                  color: Colors.white,
-                  child: const Center(
+                return const Scaffold(
+                  backgroundColor: Colors.white,
+                  body: Center(
                     child: Text('No messages'),
                   ),
                 );
@@ -193,14 +213,6 @@ class _ChatmessagesState extends State<Chatmessages> {
             },
             sendButtonColor: Colors.purple,
             actions: [
-              InkWell(
-                child: const Icon(
-                  Icons.add,
-                  color: Colors.black,
-                  size: 24,
-                ),
-                onTap: () {},
-              ),
               Padding(
                 padding: const EdgeInsets.only(left: 8, right: 8),
                 child: InkWell(

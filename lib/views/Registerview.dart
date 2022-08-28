@@ -39,7 +39,6 @@ class _RegisterViewState extends State<RegisterView> {
 
   @override
   Widget build(BuildContext context) {
-    var invalid = true;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
@@ -99,7 +98,7 @@ class _RegisterViewState extends State<RegisterView> {
             child: TextField(
               obscureText: true,
               controller: confirmpassword,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: 'confirm password...',
                   labelStyle: TextStyle(color: Colors.purple)),
@@ -117,14 +116,14 @@ class _RegisterViewState extends State<RegisterView> {
                       email: email.text,
                       password: password.text,
                       context: context);
-                  print('$user  /////////////');
                   if (user != null) {
-                    await chatuserservice().create_user(
+                    final userincloud = await chatuserservice().create_user(
                         email: email.text,
                         name: name.text,
                         photourl: '',
                         password: password.text,
                         context: context);
+
                     Navigator.of(context)
                         .pushNamedAndRemoveUntil(homeview, (route) => false);
                   }

@@ -57,7 +57,6 @@ class Imagetakeruploader {
       required String receivername}) async {
     final image = await pickimage();
     if (image != null) {
-      print('ok');
       final url =
           await uploadFileforsend(messagedocid: messdocid, image: image);
 

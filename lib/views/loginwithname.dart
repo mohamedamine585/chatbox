@@ -81,6 +81,7 @@ class _LoginwithnameState extends State<Loginwithname> {
           height: 25,
         ),
         TextButton(
+            style: TextButton.styleFrom(backgroundColor: Colors.purple),
             onPressed: () async {
               try {
                 final user = await Authservice.firebase().loginwithusername(
@@ -95,7 +96,7 @@ class _LoginwithnameState extends State<Loginwithname> {
             },
             child: const Text(
               'Log in',
-              style: TextStyle(color: Colors.purple),
+              style: TextStyle(color: Colors.white),
             )),
         TextButton(
             onPressed: () {

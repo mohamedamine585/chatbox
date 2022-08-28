@@ -25,9 +25,7 @@ class chatservice {
         frortobeemail: senderemail,
         status: 'request sender',
       });
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
   }
 
   Future<void> abortfriendrequestordeletefriend(
@@ -72,9 +70,7 @@ class chatservice {
           .collection(sendername)
           .doc(receiverdocument.docs.first.id)
           .delete();
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
   }
 
   Future<void> cancelfriendrequest(
@@ -93,7 +89,6 @@ class chatservice {
         .where(tobefriendname, isEqualTo: sendername)
         .get()
         .then((value) => value);
-    print(senderdocument);
     await FirebaseFirestore.instance
         .collection(receivername)
         .doc(senderdocument.docs.first.id)
@@ -149,9 +144,7 @@ class chatservice {
           .update({
         Messagesdocid: username + '*' + friendname,
       });
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
   }
 
   Future<void> Sendmessage(
@@ -252,7 +245,6 @@ class chatservice {
             if (data?.data?.first == null) {
               return TextButton(
                   onPressed: () async {
-                    print(username);
                     await chatservice().sendfriendrequest(
                         sendername: username!,
                         senderemail: useremail!,
@@ -299,7 +291,7 @@ class chatservice {
               return Row(
                 children: [
                   const SizedBox(
-                    width: 20,
+                    width: 65,
                   ),
                   TextButton(
                       onPressed: () async {

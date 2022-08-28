@@ -25,9 +25,7 @@ class chatuserservice {
           )
           .get()
           .then((value) => value.docs.map((doc) => chatuser.fromsnapshot(doc)));
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
   }
 
   Future<Iterable<chatuser?>?> get_user_byUsername(
@@ -45,7 +43,6 @@ class chatuserservice {
       }
       return null;
     } catch (e) {
-      print(e);
       return null;
     }
   }
@@ -261,7 +258,6 @@ class chatuserservice {
     final oldcollection = FirebaseFirestore.instance.collection(oldname);
     final thedocs = await oldcollection.get();
     for (var element in thedocs.docs) {
-      print(element);
       await FirebaseFirestore.instance.collection(newname).add(element.data());
     }
     final frienddoc = await oldcollection.get();
@@ -361,16 +357,12 @@ class _changingpasswordState extends State<changingpassword> {
                 email: Authservice.firebase().getcurrentuser()?.email,
                 password: oldpassword.text,
                 context: context);
-            if (user == null)
-              print('no');
-            else {
+            if (user != null) {
               if (newpassword.text == confirmnewpassword.text) {
                 await Authservice.firebase()
                     .changepassword(newpassord: newpassword.text);
                 Navigator.of(context).pop();
-              } else {
-                print('no1');
-              }
+              } else {}
             }
           },
           child: const Text(

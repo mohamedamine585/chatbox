@@ -1,5 +1,6 @@
 import 'package:chat/views/Firstview.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import '../Authservice.dart/Authservice.dart';
 import 'Loginview.dart';
@@ -21,7 +22,12 @@ class MyApp extends StatelessWidget {
             if (user != null) return const Chatboxhome();
             return const Firstview();
           }
-          return const RegisterView();
+          return Center(
+              child: const Scaffold(
+            body: const CircularProgressIndicator(
+              color: Colors.purple,
+            ),
+          ));
         }));
   }
 }

@@ -31,7 +31,7 @@ class _PrivacyviewState extends State<Privacyview> {
                 onPressed: () async {
                   chatuserservice().showchangepassworddialog(context: context);
                 },
-                child: const Text('Change Profile photo',
+                child: const Text('Change the password',
                     style: TextStyle(color: Colors.black)),
               ),
             ),

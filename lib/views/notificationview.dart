@@ -41,12 +41,12 @@ class _NotificationsviewState extends State<Notificationsview> {
             ),
             builder: ((context, snapshot) {
               final data = snapshot as AsyncSnapshot<Iterable<friend_ortobe?>?>;
-              print(data.data?.length);
-              if (data.data?.isNotEmpty ?? false) {
-                return FutureBuilder(
-                    future: chatuserservice().addbadgenot(
-                        Username: username, newbadgenot: snapshot.data!.length),
-                    builder: (context, snapshot1) {
+
+              return FutureBuilder(
+                  future: chatuserservice()
+                      .addbadgenot(Username: username, newbadgenot: 0),
+                  builder: (context, snapshot1) {
+                    if (data.data?.isNotEmpty ?? false) {
                       return ListView.builder(
                           itemCount: snapshot.data?.length,
                           itemBuilder: ((context, index) {
@@ -71,17 +71,16 @@ class _NotificationsviewState extends State<Notificationsview> {
                                   icon: const Icon(Icons.check)),
                             );
                           }));
-                    });
-              }
-
-              return const Scaffold(
-                body: Center(
-                  child: Text(
-                    'No Notifications',
-                    style: TextStyle(fontSize: 30),
-                  ),
-                ),
-              );
+                    }
+                    return const Scaffold(
+                      body: Center(
+                        child: Text(
+                          'No Notifications',
+                          style: TextStyle(fontSize: 30),
+                        ),
+                      ),
+                    );
+                  });
             })));
   }
 }

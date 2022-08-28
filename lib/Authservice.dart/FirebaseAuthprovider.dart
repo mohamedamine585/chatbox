@@ -45,9 +45,7 @@ class Firebaseauthprovider implements Authprovider {
   Future<void> logout() async {
     try {
       await FirebaseAuth.instance.signOut();
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
   }
 
   @override
@@ -57,32 +55,36 @@ class Firebaseauthprovider implements Authprovider {
       required String password,
       required BuildContext context}) async {
     final all_users_with_that_name =
-        await chatuserservice().get_user_byUsername(Username: Username);
+        (await chatuserservice().get_user_byUsername(Username: Username))
+            ?.toList();
 
-    if (all_users_with_that_name != null) {
-      try {
-        await FirebaseAuth.instance
-            .createUserWithEmailAndPassword(email: email, password: password);
-      } catch (e) {
+    if (all_users_with_that_name?.isEmpty ?? false) {
+      if (Username == '') {
         await showerrordialog(
             context: context,
             title: 'Error',
-            text: e.toString(),
+            text: 'Invalid username',
+            keybutton: 'Ok');
+        return null;
+      }
+
+      try {
+        await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(email: email, password: password);
+      } on FirebaseAuthException catch (e) {
+        await showerrordialog(
+            context: context,
+            title: 'Error',
+            text: e.message ?? e.toString(),
             keybutton: "Ok");
         return null;
       }
       return Authuser(email);
-    } else if (Username == '') {
-      await showerrordialog(
-          context: context,
-          title: 'Error',
-          text: 'Invalid username',
-          keybutton: 'Ok');
     } else {
       await showerrordialog(
           context: context,
           title: 'Error',
-          text: 'Invalid Username',
+          text: 'This username is already used',
           keybutton: 'Ok');
     }
     return null;
@@ -92,9 +94,7 @@ class Firebaseauthprovider implements Authprovider {
   User? getcurrentuser() {
     try {
       return FirebaseAuth.instance.currentUser;
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
     return null;
   }
 
@@ -112,7 +112,6 @@ class Firebaseauthprovider implements Authprovider {
       required BuildContext context}) async {
     final userincloud =
         await chatuserservice().get_user_byUsername(Username: Username);
-    print(userincloud);
     try {
       if (userincloud!.isNotEmpty) {
         await FirebaseAuth.instance.signInWithEmailAndPassword(

@@ -1,3 +1,4 @@
+import 'package:chat/views/Accountsettings.dart';
 import 'package:chat/views/Chatview.dart';
 import 'package:chat/views/Loginchoice.dart';
 import 'package:chat/views/Loginview.dart';
@@ -32,6 +33,7 @@ void main() {
         'loginswitch': ((context) => const Loginswitch()),
         'loginviewwithname': ((context) => const Loginwithname()),
         'profileview': ((context) => const Profileview()),
-        'privacyview': ((context) => const Privacyview())
+        'privacyview': ((context) => const Privacyview()),
+        'accountsettingsview': ((context) => const Accountsettingsview())
       }));
 }

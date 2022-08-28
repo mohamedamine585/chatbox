@@ -36,10 +36,17 @@ class _Chatboxhome extends State<Chatboxhome> {
                   return Scaffold(
                     appBar: AppBar(
                       elevation: 0,
-                      title: const Text(
-                        'Chatbox',
-                        style:
-                            TextStyle(color: Color.fromARGB(255, 111, 46, 131)),
+                      title: Row(
+                        children: const [
+                          SizedBox(
+                            width: 68,
+                          ),
+                          Text(
+                            'Stream',
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 111, 46, 131)),
+                          ),
+                        ],
                       ),
                       backgroundColor: Color.fromARGB(255, 252, 252, 252),
                       leading: IconButton(
@@ -68,7 +75,7 @@ class _Chatboxhome extends State<Chatboxhome> {
                             },
                             icon: Badge(
                                 badgeContent: Text(
-                                    '${(data1.data?.length ?? 0) - viewednot}'),
+                                    '${(((data1.data?.length) ?? 0 - viewednot) != 0) ? ((data1.data?.length) ?? 0 - viewednot) : ''}'),
                                 child: const Icon(Icons.notifications)))
                       ],
                     ),
@@ -102,8 +109,15 @@ class _Chatboxhome extends State<Chatboxhome> {
                                       ));
                                 }));
                           }
-                          return const Scaffold(
-                              body: CircularProgressIndicator());
+                          return Scaffold(
+                              body: Center(
+                            child: Column(
+                              children: const [
+                                Text('Loading...'),
+                                CircularProgressIndicator(),
+                              ],
+                            ),
+                          ));
                         })),
                   );
                 });

@@ -28,21 +28,11 @@ class _chatuserviewState extends State<chatuserview> {
 
           if (d.data?.first?.email != vieweduser.email) {
             return Scaffold(
+              backgroundColor: Colors.white,
               appBar: AppBar(
                 iconTheme: const IconThemeData(color: Colors.purple),
                 elevation: 0,
                 backgroundColor: Colors.white,
-                title: Row(
-                  children: [
-                    const SizedBox(
-                      width: 60,
-                    ),
-                    Text(
-                      vieweduser.Username ?? '',
-                      style: const TextStyle(color: Colors.purple),
-                    ),
-                  ],
-                ),
               ),
               body: Column(children: [
                 Center(

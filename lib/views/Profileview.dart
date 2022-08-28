@@ -17,7 +17,6 @@ class _ProfileviewState extends State<Profileview> {
   @override
   Widget build(BuildContext context) {
     final user = ModalRoute.of(context)?.settings.arguments as chatuser?;
-    print(user);
     return Scaffold(
         appBar: AppBar(
           iconTheme: const IconThemeData(color: Colors.purple),
@@ -52,8 +51,16 @@ class _ProfileviewState extends State<Profileview> {
                       truekeybutton: 'Delete',
                       falsekeybutton: 'Cancel');
                   if (shoulddeletephoto ?? false) {
-                    await Imagetakeruploader()
-                        .deleteuserimage(email: user?.email ?? '');
+                    final shoulddeletephoto = await showgenericdialog(
+                        context: context,
+                        title: 'Delete user photo',
+                        text: 'Do you want to delete your photo',
+                        truekeybutton: 'Yes',
+                        falsekeybutton: 'No');
+                    if (shoulddeletephoto ?? false) {
+                      await Imagetakeruploader()
+                          .deleteuserimage(email: user?.email ?? '');
+                    }
                   }
                 },
                 child: const Text(

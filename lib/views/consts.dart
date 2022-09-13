@@ -18,3 +18,6 @@ const loginviewwithname = 'loginviewwithname';
 const loginswitch = 'loginswitch';
 const profileview = 'profileview';
 const privacyview = 'privacyview';
+const accountsettingsview = 'accountsettingsview';
+const resetpasswordview = 'resetpasswordview';
+const generalreset = "generalreset";

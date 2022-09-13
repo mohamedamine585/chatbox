@@ -20,5 +20,10 @@ abstract class Authprovider {
   Future<void> initialize();
   Future<void> logout();
   User? getcurrentuser();
-  Future<void> changepassword({required String newpassord});
+  Future<void> changepassword(
+      {required String newpassord, required BuildContext context});
+  Future<void> sendemailverification(
+      {required String email, required BuildContext context});
+  Future<void> sendpasswordreset(
+      {required String email, required BuildContext context});
 }

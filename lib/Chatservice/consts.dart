@@ -15,3 +15,4 @@ const Isimage = 'isimage';
 const Receivername = 'receivername';
 const Hashedpassword = 'hashedpassword';
 const Onnotbadge = 'onnotbadge';
+const Isemailverified = 'isemailverified';

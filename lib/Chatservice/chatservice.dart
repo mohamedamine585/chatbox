@@ -25,9 +25,7 @@ class chatservice {
         frortobeemail: senderemail,
         status: 'request sender',
       });
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
   }
 
   Future<void> abortfriendrequestordeletefriend(
@@ -72,9 +70,7 @@ class chatservice {
           .collection(sendername)
           .doc(receiverdocument.docs.first.id)
           .delete();
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
   }
 
   Future<void> cancelfriendrequest(
@@ -93,7 +89,6 @@ class chatservice {
         .where(tobefriendname, isEqualTo: sendername)
         .get()
         .then((value) => value);
-    print(senderdocument);
     await FirebaseFirestore.instance
         .collection(receivername)
         .doc(senderdocument.docs.first.id)
@@ -149,9 +144,7 @@ class chatservice {
           .update({
         Messagesdocid: username + '*' + friendname,
       });
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
   }
 
   Future<void> Sendmessage(
@@ -221,15 +214,18 @@ class chatservice {
 
   Stream<Iterable<chatuser>?>? get_searched({required String? text}) {
     if (text != null && text != '') {
-      return FirebaseFirestore.instance.collection('users').snapshots().map(
-          (event) => event.docs.map((e) => chatuser.fromsnapshot(e)).where(
+      final stream = FirebaseFirestore.instance
+          .collection('users')
+          .snapshots()
+          .map((event) => event.docs.map((e) => chatuser.fromsnapshot(e)).where(
               (element) => (element.Username?.contains(text) ??
                   element.Username != '')));
+      return stream;
     }
     return FirebaseFirestore.instance.collection('users').snapshots().map(
         (event) => event.docs
             .map((e) => chatuser.fromsnapshot(e))
-            .where((element) => element.Username != ''));
+            .where((element) => element.Username == '*'));
   }
 
   Widget checkifrequestissent(
@@ -238,117 +234,122 @@ class chatservice {
       required String? viewedname,
       required String? viewedemail,
       required BuildContext context}) {
-    return StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection(username ?? '')
-            .snapshots()
-            .map(((event) => event.docs
-                .map((e) => friend_ortobe.fromsnapshot(e))
-                .where((element) => element.name == viewedname))),
-        builder: ((context, snapshot) {
-          final data = snapshot as AsyncSnapshot<Iterable<friend_ortobe>>?;
+    if (username != null) {
+      return StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection(username)
+              .snapshots()
+              .map(((event) => event.docs
+                  .map((e) => friend_ortobe.fromsnapshot(e))
+                  .where((element) => element.name == viewedname))),
+          builder: ((context, snapshot) {
+            final data = snapshot as AsyncSnapshot<Iterable<friend_ortobe>>?;
 
-          if (data?.data?.isNotEmpty ?? false) {
-            if (data?.data?.first == null) {
-              return TextButton(
-                  onPressed: () async {
-                    print(username);
-                    await chatservice().sendfriendrequest(
-                        sendername: username!,
-                        senderemail: useremail!,
-                        receivername: viewedname!,
-                        receiveremail: viewedemail!);
-                  },
-                  child: const Text('send chat invitation'));
-            } else if (data?.data?.first.Status == 'friend') {
-              return Column(
-                children: [
-                  const Center(
-                      child: Text(
-                    'Friend',
-                    style: TextStyle(
-                        fontSize: 25,
-                        color: Color.fromARGB(255, 178, 100, 192)),
-                  )),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  TextButton(
-                      onPressed: () async {
-                        final shouldunfriend = await showgenericdialog(
-                            context: context,
-                            title: 'Unfriend $viewedname ?',
-                            text:
-                                "You won't be able to chat with $viewedname  and your conversation with him will be deleted",
-                            truekeybutton: 'Unfriend',
-                            falsekeybutton: 'Cancel');
-                        if (shouldunfriend ?? false) {
+            if (data?.data?.isNotEmpty ?? false) {
+              if (data?.data?.first == null) {
+                return TextButton(
+                    onPressed: () async {
+                      await chatservice().sendfriendrequest(
+                          sendername: username,
+                          senderemail: useremail!,
+                          receivername: viewedname!,
+                          receiveremail: viewedemail!);
+                    },
+                    child: const Text('send chat invitation'));
+              } else if (data?.data?.first.Status == 'friend') {
+                return Column(
+                  children: [
+                    const Center(
+                        child: Text(
+                      'Friend',
+                      style: TextStyle(
+                          fontSize: 25,
+                          color: Color.fromARGB(255, 178, 100, 192)),
+                    )),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    TextButton(
+                        onPressed: () async {
+                          final shouldunfriend = await showgenericdialog(
+                              context: context,
+                              title: 'Unfriend $viewedname ?',
+                              text:
+                                  "You won't be able to chat with $viewedname  and your conversation with him will be deleted",
+                              truekeybutton: 'Unfriend',
+                              falsekeybutton: 'Cancel');
+                          if (shouldunfriend ?? false) {
+                            await chatservice()
+                                .abortfriendrequestordeletefriend(
+                                    receivername: username,
+                                    sendername: viewedname!,
+                                    arefriends: true);
+                          }
+                        },
+                        child: const Text(
+                          'Unfriend',
+                          style: TextStyle(color: Colors.red),
+                        ))
+                  ],
+                );
+              } else if (data?.data?.first.Status == 'request sender') {
+                return Row(
+                  children: [
+                    const SizedBox(
+                      width: 65,
+                    ),
+                    TextButton(
+                        onPressed: () async {
+                          await chatservice().acceptrfriendrequest(
+                              username: username, friendname: viewedname!);
+                        },
+                        child: const Text(
+                          'accept invitation',
+                          style: TextStyle(color: Colors.purple),
+                        )),
+                    TextButton(
+                        onPressed: () async {
                           await chatservice().abortfriendrequestordeletefriend(
-                              receivername: username!,
+                              receivername: username,
                               sendername: viewedname!,
-                              arefriends: true);
-                        }
-                      },
-                      child: const Text(
-                        'Unfriend',
-                        style: TextStyle(color: Colors.red),
-                      ))
-                ],
-              );
-            } else if (data?.data?.first.Status == 'request sender') {
-              return Row(
-                children: [
-                  const SizedBox(
-                    width: 20,
-                  ),
-                  TextButton(
-                      onPressed: () async {
-                        await chatservice().acceptrfriendrequest(
-                            username: username!, friendname: viewedname!);
-                      },
-                      child: const Text(
-                        'accept invitation',
-                        style: TextStyle(color: Colors.purple),
-                      )),
-                  TextButton(
-                      onPressed: () async {
-                        await chatservice().abortfriendrequestordeletefriend(
-                            receivername: username!,
-                            sendername: viewedname!,
-                            arefriends: false);
-                      },
-                      child: const Text('refuse invitation',
-                          style: TextStyle(color: Colors.red))),
-                ],
-              );
-            } else {
-              return Row(
-                children: [
-                  const SizedBox(
-                    width: 85,
-                  ),
-                  const Text('Invitation was sent'),
-                  TextButton(
-                      onPressed: () async {
-                        await chatservice().cancelfriendrequest(
-                            sendername: username!, receivername: viewedname!);
-                      },
-                      child: const Text('Cancel',
-                          style: TextStyle(color: Colors.red)))
-                ],
-              );
+                              arefriends: false);
+                        },
+                        child: const Text('refuse invitation',
+                            style: TextStyle(color: Colors.red))),
+                  ],
+                );
+              } else {
+                return Row(
+                  children: [
+                    const SizedBox(
+                      width: 85,
+                    ),
+                    const Text('Invitation was sent'),
+                    TextButton(
+                        onPressed: () async {
+                          await chatservice().cancelfriendrequest(
+                              sendername: username, receivername: viewedname!);
+                        },
+                        child: const Text('Cancel',
+                            style: TextStyle(color: Colors.red)))
+                  ],
+                );
+              }
             }
-          }
-          return TextButton(
-              onPressed: () async {
-                await sendfriendrequest(
-                    sendername: username!,
-                    senderemail: useremail!,
-                    receivername: viewedname!,
-                    receiveremail: viewedemail!);
-              },
-              child: const Text('send invitation',
-                  style: TextStyle(color: Colors.purple)));
-        }));
+            return TextButton(
+                onPressed: () async {
+                  await sendfriendrequest(
+                      sendername: username,
+                      senderemail: useremail!,
+                      receivername: viewedname!,
+                      receiveremail: viewedemail!);
+                },
+                child: const Text('send invitation',
+                    style: TextStyle(color: Colors.purple)));
+          }));
+    }
+    return const Scaffold(
+      body: Center(child: CircularProgressIndicator()),
+    );
   }
 }

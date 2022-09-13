@@ -19,7 +19,7 @@ class _PrivacyviewState extends State<Privacyview> {
           iconTheme: const IconThemeData(color: Colors.purple),
           backgroundColor: Colors.white,
           title: const Text(
-            'Profile',
+            'Privacy & Security',
             style: const TextStyle(color: Colors.purple),
           ),
         ),
@@ -31,7 +31,7 @@ class _PrivacyviewState extends State<Privacyview> {
                 onPressed: () async {
                   chatuserservice().showchangepassworddialog(context: context);
                 },
-                child: const Text('Change Profile photo',
+                child: const Text('Change the password',
                     style: TextStyle(color: Colors.black)),
               ),
             ),

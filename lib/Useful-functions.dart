@@ -14,7 +14,7 @@ Future<bool?> showerrordialog({
     builder: ((context) {
       return AlertDialog(
         backgroundColor: Color.fromARGB(255, 219, 210, 210),
-        title: const Text('Error'),
+        title: Text('$title'),
         content: Text(text),
         actions: [
           TextButton(

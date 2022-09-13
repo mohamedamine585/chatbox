@@ -12,6 +12,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class chatuserservice {
   final users = FirebaseFirestore.instance.collection('users');
@@ -25,9 +26,7 @@ class chatuserservice {
           )
           .get()
           .then((value) => value.docs.map((doc) => chatuser.fromsnapshot(doc)));
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
   }
 
   Future<Iterable<chatuser?>?> get_user_byUsername(
@@ -45,7 +44,6 @@ class chatuserservice {
       }
       return null;
     } catch (e) {
-      print(e);
       return null;
     }
   }
@@ -129,12 +127,13 @@ class chatuserservice {
     return null;
   }
 
-  Future<chatuser?> create_user(
-      {required String? email,
-      required String name,
-      required String? photourl,
-      required String password,
-      required BuildContext context}) async {
+  Future<chatuser?> create_user({
+    required String? email,
+    required String name,
+    required String? photourl,
+    required String password,
+    required BuildContext context,
+  }) async {
     if (password.isEmpty) {
       await showerrordialog(
           context: context,
@@ -168,6 +167,8 @@ class chatuserservice {
         chatuser_email: email,
         chatuser_name: name,
         userphotourl: photourl,
+        Hashedpassword: hashedpassword.toString(),
+        Isemailverified: false,
       });
       await FirebaseFirestore.instance.collection(name).add({});
       return chatuser(
@@ -261,7 +262,6 @@ class chatuserservice {
     final oldcollection = FirebaseFirestore.instance.collection(oldname);
     final thedocs = await oldcollection.get();
     for (var element in thedocs.docs) {
-      print(element);
       await FirebaseFirestore.instance.collection(newname).add(element.data());
     }
     final frienddoc = await oldcollection.get();
@@ -361,15 +361,17 @@ class _changingpasswordState extends State<changingpassword> {
                 email: Authservice.firebase().getcurrentuser()?.email,
                 password: oldpassword.text,
                 context: context);
-            if (user == null)
-              print('no');
-            else {
-              if (newpassword.text == confirmnewpassword.text) {
-                await Authservice.firebase()
-                    .changepassword(newpassord: newpassword.text);
-                Navigator.of(context).pop();
+            if (user != null) {
+              if (newpassword.text != confirmnewpassword.text) {
+                await showerrordialog(
+                    context: context,
+                    title: "Error",
+                    text: "Password isn't well confirmed",
+                    keybutton: "Got it");
               } else {
-                print('no1');
+                await Authservice.firebase().changepassword(
+                    newpassord: newpassword.text, context: context);
+                Navigator.of(context).pop();
               }
             }
           },

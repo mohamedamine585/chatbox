@@ -98,13 +98,18 @@ class _LoginViewState extends State<LoginView> {
               style: TextStyle(color: Colors.white),
             )),
         TextButton(
-            style: TextButton.styleFrom(backgroundColor: Colors.purple),
+            onPressed: () {
+              Navigator.of(context).pushNamed(resetpasswordview);
+            },
+            child: const Text("I forgot my password",
+                style: TextStyle(color: Colors.purple))),
+        TextButton(
             onPressed: () {
               Navigator.of(context)
                   .pushNamedAndRemoveUntil(registerview, (route) => false);
             },
             child: const Text("I haven't an account",
-                style: TextStyle(color: Colors.white))),
+                style: TextStyle(color: Colors.purple))),
       ]),
     );
   }

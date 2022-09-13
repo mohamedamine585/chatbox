@@ -28,21 +28,12 @@ class _chatuserviewState extends State<chatuserview> {
 
           if (d.data?.first?.email != vieweduser.email) {
             return Scaffold(
+              resizeToAvoidBottomInset: false,
+              backgroundColor: Colors.white,
               appBar: AppBar(
                 iconTheme: const IconThemeData(color: Colors.purple),
                 elevation: 0,
                 backgroundColor: Colors.white,
-                title: Row(
-                  children: [
-                    const SizedBox(
-                      width: 60,
-                    ),
-                    Text(
-                      vieweduser.Username ?? '',
-                      style: const TextStyle(color: Colors.purple),
-                    ),
-                  ],
-                ),
               ),
               body: Column(children: [
                 Center(
@@ -64,7 +55,7 @@ class _chatuserviewState extends State<chatuserview> {
                   height: 25,
                 ),
                 chatservice().checkifrequestissent(
-                    username: snapshot.data?.first?.Username ?? '',
+                    username: snapshot.data?.first?.Username,
                     useremail: snapshot.data?.first?.email,
                     viewedname: vieweduser.Username,
                     viewedemail: vieweduser.email,

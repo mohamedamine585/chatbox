@@ -81,6 +81,7 @@ class _LoginwithnameState extends State<Loginwithname> {
           height: 25,
         ),
         TextButton(
+            style: TextButton.styleFrom(backgroundColor: Colors.purple),
             onPressed: () async {
               try {
                 final user = await Authservice.firebase().loginwithusername(
@@ -95,12 +96,17 @@ class _LoginwithnameState extends State<Loginwithname> {
             },
             child: const Text(
               'Log in',
-              style: TextStyle(color: Colors.purple),
+              style: TextStyle(color: Colors.white),
             )),
         TextButton(
             onPressed: () {
-              Navigator.of(context)
-                  .pushNamedAndRemoveUntil(registerview, (route) => false);
+              Navigator.of(context).pushNamed(resetpasswordview);
+            },
+            child: const Text("I forgot my password",
+                style: TextStyle(color: Colors.purple))),
+        TextButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed(resetpasswordview);
             },
             child: const Text("I haven't an account",
                 style: TextStyle(color: Colors.purple))),

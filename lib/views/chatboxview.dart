@@ -36,10 +36,17 @@ class _Chatboxhome extends State<Chatboxhome> {
                   return Scaffold(
                     appBar: AppBar(
                       elevation: 0,
-                      title: const Text(
-                        'Chatbox',
-                        style:
-                            TextStyle(color: Color.fromARGB(255, 111, 46, 131)),
+                      title: Row(
+                        children: const [
+                          SizedBox(
+                            width: 68,
+                          ),
+                          Text(
+                            'Stream',
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 111, 46, 131)),
+                          ),
+                        ],
                       ),
                       backgroundColor: Color.fromARGB(255, 252, 252, 252),
                       leading: IconButton(
@@ -68,7 +75,7 @@ class _Chatboxhome extends State<Chatboxhome> {
                             },
                             icon: Badge(
                                 badgeContent: Text(
-                                    '${(data1.data?.length ?? 0) - viewednot}'),
+                                    '${(((data1.data?.length) ?? 0 - viewednot) != 0) ? ((data1.data?.length) ?? 0 - viewednot) : ''}'),
                                 child: const Icon(Icons.notifications)))
                       ],
                     ),
@@ -85,31 +92,55 @@ class _Chatboxhome extends State<Chatboxhome> {
                                   final friend =
                                       snapshot1.data!.elementAt(index);
 
-                                  return ListTile(
-                                      onTap: () {
-                                        Navigator.of(context).pushNamed(
-                                            chatview,
-                                            arguments: [user, friend]);
-                                      },
-                                      title: Text(
-                                        friend!.name!,
-                                        maxLines: 1,
-                                      ),
-                                      leading: IconButton(
-                                        onPressed: (() async {}),
-                                        icon: Imagetakeruploader().showingimage(
-                                            email: friend.email, radius: 20),
-                                      ));
+                                  return Card(
+                                      child: ListTile(
+                                          onTap: () {
+                                            Navigator.of(context).pushNamed(
+                                                chatview,
+                                                arguments: [user, friend]);
+                                          },
+                                          title: Text(
+                                            friend!.name!,
+                                            maxLines: 1,
+                                          ),
+                                          leading: IconButton(
+                                            onPressed: (() async {}),
+                                            icon: Imagetakeruploader()
+                                                .showingimage(
+                                                    email: friend.email,
+                                                    radius: 20),
+                                          )));
                                 }));
                           }
-                          return const Scaffold(
-                              body: CircularProgressIndicator());
+                          return Scaffold(
+                              body: Center(
+                            child: Column(
+                              children: const [
+                                SizedBox(height: 60),
+                                Text('Loading...'),
+                                CircularProgressIndicator(
+                                  color: Colors.purple,
+                                ),
+                              ],
+                            ),
+                          ));
                         })),
                   );
                 });
           }
 
-          return const Scaffold(body: CircularProgressIndicator());
+          return Scaffold(
+              body: Center(
+            child: Column(
+              children: const [
+                SizedBox(height: 260),
+                Text('Loading...'),
+                CircularProgressIndicator(
+                  color: Colors.purple,
+                ),
+              ],
+            ),
+          ));
         }));
   }
 }

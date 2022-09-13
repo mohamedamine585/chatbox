@@ -51,8 +51,9 @@ class Authservice implements Authprovider {
   }
 
   @override
-  Future<void> changepassword({required String newpassord}) async {
-    await provider.changepassword(newpassord: newpassord);
+  Future<void> changepassword(
+      {required String newpassord, required BuildContext context}) async {
+    await provider.changepassword(newpassord: newpassord, context: context);
   }
 
   @override
@@ -66,5 +67,18 @@ class Authservice implements Authprovider {
     } catch (e) {
       return null;
     }
+  }
+
+  @override
+  Future<void> sendemailverification(
+      {required String email, required BuildContext context}) async {
+    await provider.sendemailverification(email: email, context: context);
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> sendpasswordreset(
+      {required String email, required BuildContext context}) async {
+    await provider.sendpasswordreset(email: email, context: context);
   }
 }

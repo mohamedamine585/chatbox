@@ -33,24 +33,34 @@ class searchdelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    return StreamBuilder(
-        stream: chatservice().get_searched(text: query),
-        builder: ((context, snapshot) {
-          final d = snapshot as AsyncSnapshot<Iterable<chatuser>?>?;
-          return ListView.builder(
-              itemCount: d?.data?.length,
-              itemBuilder: ((context, index) {
-                final user = d?.data!.elementAt(index);
-                return ListTile(
-                  title: Text(user?.Username ?? ''),
-                  leading: const Icon(Icons.person),
-                  onTap: () {
-                    Navigator.of(context)
-                        .pushNamed(Chatuserview, arguments: user);
-                  },
-                );
-              }));
-        }));
+    try {
+      return StreamBuilder(
+          stream: chatservice().get_searched(text: query),
+          builder: ((context, snapshot) {
+            final d = snapshot as AsyncSnapshot<Iterable<chatuser>?>?;
+            if (d?.data?.isNotEmpty ?? false) {
+              return ListView.builder(
+                  itemCount: d?.data?.length,
+                  itemBuilder: ((context, index) {
+                    final user = d?.data!.elementAt(index);
+
+                    return ListTile(
+                      title: Text(user?.Username ?? ''),
+                      leading: const Icon(Icons.person),
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamed(Chatuserview, arguments: user);
+                      },
+                    );
+                  }));
+            }
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }));
+    } catch (e) {
+      return const ListTile();
+    }
   }
 
   @override

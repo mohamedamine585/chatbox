@@ -1,6 +1,7 @@
+import 'package:chat/Authservice.dart/Authservice.dart';
+import 'package:chat/Views/consts.dart';
 import 'package:flutter/material.dart';
 
-import '../Authservice.dart/Authservice.dart';
 import 'consts.dart';
 
 class LoginView extends StatefulWidget {
@@ -78,8 +79,8 @@ class _LoginViewState extends State<LoginView> {
         ),
         TextButton(
             onPressed: () async {
-              final user = await Authservice.firebase()
-                  .login(email: email.text, password: password.text);
+              final user = await Authservice.firebase().loginwithemail(
+                  email: email.text, password: password.text, context: context);
 
               if (user?.email != '') {
                 Navigator.of(context)

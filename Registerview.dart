@@ -1,7 +1,8 @@
+import 'package:chat/Authservice.dart/Authservice.dart';
+import 'package:chat/Chatservice/chatuser/chatuserservice.dart';
+import 'package:chat/Views/consts.dart';
 import 'package:flutter/material.dart';
 
-import '../Authservice.dart/Authservice.dart';
-import '../Chatservice/chatuserservice.dart';
 import 'consts.dart';
 
 class RegisterView extends StatefulWidget {
@@ -75,8 +76,11 @@ class _RegisterViewState extends State<RegisterView> {
           ),
           TextButton(
               onPressed: () async {
-                final user = await Authservice.firebase()
-                    .register(email: email.text, password: password.text);
+                final user = await Authservice.firebase().register(
+                    email: email.text,
+                    password: password.text,
+                    Username: name.text,
+                    context: context);
                 if (user != null) {
                   await chatuserservice().create_user(
                       email: email.text, name: name.text, photourl: '');

@@ -1,10 +1,9 @@
 import 'package:chat/Authservice.dart/chatuser.dart';
+import 'package:chat/Chatservice/chatservice.dart';
+import 'package:chat/Imageservice/Image.dart';
 import 'package:chat/views/consts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import '../Chatservice/chatservice.dart';
-import '../imageservice/image.dart';
 
 class searchdelegate extends SearchDelegate {
   @override

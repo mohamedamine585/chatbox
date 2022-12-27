@@ -1,11 +1,12 @@
+import 'package:chat/Authservice.dart/Authservice.dart';
+import 'package:chat/Authservice.dart/chatuser.dart';
+import 'package:chat/Chatservice/chatuser/chatuserservice.dart';
+import 'package:chat/Chatservice/chatuser/requestsender/receiver.dart';
+import 'package:chat/Imageservice/Image.dart';
+import 'package:chat/Views/consts.dart';
 import 'package:chat/views/search.dart';
 import 'package:flutter/material.dart';
 
-import '../Authservice.dart/Authservice.dart';
-import '../Authservice.dart/chatuser.dart';
-import '../Chatservice/chatuserservice.dart';
-import '../Chatservice/requestsender/requestsender.dart';
-import '../imageservice/image.dart';
 import 'consts.dart';
 
 class Chatboxhome extends StatefulWidget {
@@ -20,7 +21,7 @@ class _Chatboxhome extends State<Chatboxhome> {
   Widget build(BuildContext context) {
     return FutureBuilder(
         future: chatuserservice()
-            .get_user(email: Authservice.firebase().getcurrentuser()?.email),
+            .get_user(email: Authservice.firebase().getcurrentuser?.email),
         builder: ((context, snapshot) {
           final sd = snapshot.data as Iterable<chatuser?>?;
           final user = sd?.first;

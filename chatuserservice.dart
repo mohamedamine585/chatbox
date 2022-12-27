@@ -3,10 +3,7 @@ import 'package:chat/Authservice.dart/chatuser.dart';
 import 'package:chat/Chatservice/consts.dart';
 import 'package:chat/Chatservice/requestsender/requestsender.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
+
 import 'package:flutter/material.dart';
 
 class chatuserservice {
@@ -41,6 +38,7 @@ class chatuserservice {
       Username: name,
       email: email,
       photourl: userphotourl,
+      hashedpassword: '',
     );
   }
 
@@ -209,15 +207,16 @@ class _changingpasswordState extends State<changingpassword> {
       ),
       TextButton(
           onPressed: () async {
-            final user = await Authservice.firebase().login(
-                email: Authservice.firebase().getcurrentuser()?.email,
-                password: oldpassword.text);
+            final user = await Authservice.firebase().loginwithemail(
+                email: Authservice.firebase().getcurrentuser?.email,
+                password: oldpassword.text,
+                context: context);
             if (user == null)
               print('no');
             else {
               if (newpassword.text == confirmnewpassword.text) {
-                await Authservice.firebase()
-                    .changepassword(newpassord: newpassword.text);
+                await Authservice.firebase().changepassword(
+                    newpassord: newpassword.text, context: context);
                 Navigator.of(context).pop();
               } else {
                 print('no1');

@@ -1,12 +1,11 @@
 import 'dart:convert';
 
+import 'package:chat/Authservice.dart/Authservice.dart';
 import 'package:chat/Authservice.dart/chatuser.dart';
 import 'package:chat/Chatservice/chatuserservice.dart';
+import 'package:chat/Imageservice/Image.dart';
 import 'package:chat/views/consts.dart';
 import 'package:flutter/material.dart';
-
-import '../Authservice.dart/Authservice.dart';
-import '../imageservice/image.dart';
 
 class Accountview extends StatefulWidget {
   const Accountview({super.key});
@@ -20,7 +19,7 @@ class _AccountviewState extends State<Accountview> {
   Widget build(BuildContext context) {
     return StreamBuilder(
         stream: chatuserservice().getallusers(
-            email: Authservice.firebase().getcurrentuser()?.email ?? ''),
+            email: Authservice.firebase().getcurrentuser?.email ?? ''),
         builder: (context, snapshot) {
           snapshot as AsyncSnapshot<Iterable<chatuser?>?>;
           return Scaffold(

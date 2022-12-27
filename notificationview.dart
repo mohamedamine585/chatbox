@@ -1,9 +1,9 @@
+import 'package:chat/Chatservice/chatservice.dart';
+import 'package:chat/Chatservice/chatuser/requestsender/receiver.dart';
+import 'package:chat/Imageservice/Image.dart';
 import 'package:flutter/material.dart';
 
-import '../Chatservice/chatservice.dart';
-import '../Chatservice/chatuserservice.dart';
-import '../Chatservice/requestsender/requestsender.dart';
-import '../imageservice/image.dart';
+import 'chatuserservice.dart';
 
 class Notificationsview extends StatefulWidget {
   const Notificationsview({super.key});

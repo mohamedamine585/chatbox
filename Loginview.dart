@@ -1,7 +1,6 @@
-import 'package:chat/Authservice.dart/Authservice.dart';
-import 'package:chat/Views/consts.dart';
 import 'package:flutter/material.dart';
 
+import '../Authservice.dart/Authservice.dart';
 import 'consts.dart';
 
 class LoginView extends StatefulWidget {
@@ -32,12 +31,14 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.purple),
         elevation: 0,
         title: Row(
           children: const [
             SizedBox(
-              width: 130,
+              width: 70,
             ),
             Text(
               'Log in',
@@ -78,19 +79,30 @@ class _LoginViewState extends State<LoginView> {
           height: 25,
         ),
         TextButton(
+            style: TextButton.styleFrom(backgroundColor: Colors.purple),
             onPressed: () async {
-              final user = await Authservice.firebase().loginwithemail(
-                  email: email.text, password: password.text, context: context);
+              try {
+                final user = await Authservice.firebase().loginwithemail(
+                    email: email.text,
+                    password: password.text,
+                    context: context);
 
-              if (user?.email != '') {
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil(homeview, (route) => false);
-              }
+                if (user != null) {
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil(homeview, (route) => false);
+                }
+              } catch (e) {}
             },
             child: const Text(
               'Log in',
-              style: TextStyle(color: Colors.purple),
+              style: TextStyle(color: Colors.white),
             )),
+        TextButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed(resetpasswordview);
+            },
+            child: const Text("I forgot my password",
+                style: TextStyle(color: Colors.purple))),
         TextButton(
             onPressed: () {
               Navigator.of(context)

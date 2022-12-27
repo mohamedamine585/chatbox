@@ -1,10 +1,12 @@
-import 'package:chat/Authservice.dart/chatuser.dart';
-import 'package:chat/views/consts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/src/widgets/container.dart';
+import 'package:flutter/src/widgets/framework.dart';
 
+import '../Authservice.dart/chatuser.dart';
 import '../Chatservice/chatservice.dart';
-import '../imageservice/image.dart';
+import '../Imageservice/Image.dart';
+import '../consts.dart';
 
 class searchdelegate extends SearchDelegate {
   @override
@@ -33,34 +35,24 @@ class searchdelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    try {
-      return StreamBuilder(
-          stream: chatservice().get_searched(text: query),
-          builder: ((context, snapshot) {
-            final d = snapshot as AsyncSnapshot<Iterable<chatuser>?>?;
-            if (d?.data?.isNotEmpty ?? false) {
-              return ListView.builder(
-                  itemCount: d?.data?.length,
-                  itemBuilder: ((context, index) {
-                    final user = d?.data!.elementAt(index);
-
-                    return ListTile(
-                      title: Text(user?.Username ?? ''),
-                      leading: const Icon(Icons.person),
-                      onTap: () {
-                        Navigator.of(context)
-                            .pushNamed(Chatuserview, arguments: user);
-                      },
-                    );
-                  }));
-            }
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
-          }));
-    } catch (e) {
-      return const ListTile();
-    }
+    return StreamBuilder(
+        stream: chatservice().get_searched(text: query),
+        builder: ((context, snapshot) {
+          AsyncSnapshot<Iterable<chatuser>?>? snapshot;
+          return ListView.builder(
+              itemCount: snapshot?.data!.length,
+              itemBuilder: ((context, index) {
+                final user = snapshot?.data!.elementAt(index);
+                return ListTile(
+                  title: Text(user?.Username ?? ''),
+                  leading: const Icon(Icons.person),
+                  onTap: () {
+                    Navigator.of(context)
+                        .pushNamed(Chatuserview, arguments: user);
+                  },
+                );
+              }));
+        }));
   }
 
   @override
@@ -68,12 +60,11 @@ class searchdelegate extends SearchDelegate {
     return StreamBuilder(
         stream: chatservice().get_searched(text: query),
         builder: ((context, snapshot) {
-          final d = snapshot as AsyncSnapshot<Iterable<chatuser>?>?;
-
+          AsyncSnapshot<Iterable<chatuser>?>? snapshot;
           return ListView.builder(
-              itemCount: d?.data?.length,
+              itemCount: snapshot?.data?.length,
               itemBuilder: ((context, index) {
-                final user = d?.data?.elementAt(index);
+                final user = snapshot?.data?.elementAt(index);
                 return ListTile(
                   title: Text(user?.Username ?? ''),
                   leading: Imagetakeruploader()

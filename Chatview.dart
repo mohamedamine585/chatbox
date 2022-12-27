@@ -4,6 +4,7 @@ import 'package:chat/Chatservice/chatuserservice.dart';
 import 'package:chat/Chatservice/consts.dart';
 import 'package:chat/Chatservice/message.dart';
 import 'package:chat/Chatservice/requestsender/requestsender.dart';
+import 'package:chat/Useful-functions.dart';
 import 'package:chat/imageservice/image.dart';
 import 'package:chat/views/consts.dart';
 import 'package:chat_bubbles/bubbles/bubble_normal.dart';
@@ -23,6 +24,7 @@ class Chatmessages extends StatefulWidget {
 
 class _ChatmessagesState extends State<Chatmessages> {
   @override
+  Iterable<Message?>? message_list = [];
   Widget build(BuildContext context) {
     final userandfriend =
         ModalRoute.of(context)?.settings.arguments as List<dynamic>;
@@ -60,63 +62,92 @@ class _ChatmessagesState extends State<Chatmessages> {
       ),
       body: Column(
         children: [
-          StreamBuilder(
-              stream: chatservice()
-                  .getmessages(messagesdocid: friend.messagesdocid ?? ''),
-              builder: ((context, snapshot) {
-                snapshot as AsyncSnapshot<Iterable<Message?>?>;
-                if (snapshot.hasData) {
-                  return Container(
-                    height: 460 - MediaQuery.of(context).viewInsets.bottom,
-                    child: ListView.builder(
-                        itemCount: snapshot.data?.length,
+          Container(
+            width: 400,
+            height: 460 - MediaQuery.of(context).viewInsets.bottom,
+            child: StreamBuilder(
+                stream: chatservice()
+                    .getmessages(messagesdocid: friend.messagesdocid ?? ''),
+                builder: ((context, snapshot) {
+                  snapshot as AsyncSnapshot<Iterable<Message?>?>;
+                  if (message_list?.length != snapshot.data?.length) {
+                    message_list = snapshot.data;
+                  }
+                  if (message_list?.isNotEmpty ?? false) {
+                    return ListView.builder(
+                        itemCount: message_list?.length,
                         reverse: true,
                         itemBuilder: ((context, index) {
-                          if (snapshot.data!.isNotEmpty) {
-                            if (snapshot.data!.elementAt(index)!.content !=
-                                '') {
-                              if (snapshot.data?.elementAt(index)?.isimage ==
-                                      false ||
-                                  snapshot.data?.elementAt(index)?.isimage ==
-                                      null) {
-                                return ListTile(
-                                  title: BubbleNormal(
-                                    text: snapshot.data!
-                                        .elementAt(index)!
-                                        .content,
-                                    color: getbubblecolor(
-                                        test: snapshot.data
-                                                ?.elementAt(index)
-                                                ?.sendername ==
-                                            user.Username),
-                                    isSender: snapshot.data
+                          final date = DateTime.fromMillisecondsSinceEpoch(
+                              (message_list?.elementAt(index))?.timestamp ?? 0);
+
+                          if (message_list?.elementAt(index)!.content != '') {
+                            if (message_list?.elementAt(index)?.isimage ==
+                                    false ||
+                                message_list?.elementAt(index)?.isimage ==
+                                    null) {
+                              return ListTile(
+                                onLongPress: () async {
+                                  if (await showgenericdialog(
+                                          context: context,
+                                          title: 'Delete message',
+                                          text:
+                                              'Do you want to delete this message',
+                                          truekeybutton: 'Yes',
+                                          falsekeybutton: 'No') ??
+                                      false) {
+                                    await chatservice().deletemessage(
+                                        Timestamp: message_list
                                             ?.elementAt(index)
-                                            ?.sendername ==
-                                        user.Username,
-                                  ),
-                                );
-                              }
-                              return Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      SizedBox(
-                                        width: seekwidth(
-                                            issender: snapshot.data
-                                                    ?.elementAt(index)
-                                                    ?.sendername ==
-                                                user.Username),
-                                      ),
-                                      Container(
-                                        child: GestureDetector(
-                                          onTap: (() {
-                                            Navigator.of(context).pushNamed(
-                                                showimageview,
-                                                arguments: snapshot.data
-                                                    ?.elementAt(index)
-                                                    ?.content);
-                                          }),
+                                            ?.timestamp,
+                                        Messagedocid: friend.messagesdocid);
+                                  }
+                                },
+                                title: BubbleNormal(
+                                  text:
+                                      message_list?.elementAt(index)!.content ??
+                                          "",
+                                  color: getbubblecolor(
+                                      test: message_list
+                                              ?.elementAt(index)
+                                              ?.sendername ==
+                                          user.Username),
+                                  isSender: message_list
+                                          ?.elementAt(index)
+                                          ?.sendername ==
+                                      user.Username,
+                                ),
+                              );
+                            }
+                            return Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      width: seekwidth(
+                                          issender: message_list
+                                                  ?.elementAt(index)
+                                                  ?.sendername ==
+                                              user.Username),
+                                    ),
+                                    Container(
+                                      child: GestureDetector(
+                                        onTap: (() {
+                                          Navigator.of(context).pushNamed(
+                                              showimageview,
+                                              arguments: message_list
+                                                  ?.elementAt(index)
+                                                  ?.content);
+                                        }),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
                                           child: (Image(
+                                              errorBuilder: ((context, error,
+                                                  stackTrace) {
+                                                return const Text(
+                                                    'Can not  load image');
+                                              }),
                                               loadingBuilder: ((context, child,
                                                   loadingProgress) {
                                                 return loadingProgress == null
@@ -142,34 +173,29 @@ class _ChatmessagesState extends State<Chatmessages> {
                                               }),
                                               width: 250,
                                               height: 200,
-                                              image: NetworkImage(snapshot.data
+                                              image: NetworkImage(message_list
                                                       ?.elementAt(index)
                                                       ?.content ??
                                                   ''))),
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: 20,
-                                  )
-                                ],
-                              );
-                            }
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                )
+                              ],
+                            );
                           }
-                          return const Center(
-                            child: Text('No messages'),
-                          );
-                        })),
-                  );
-                }
-                return Container(
-                  color: Colors.white,
-                  child: const Center(
+                          return const Scaffold();
+                        }));
+                  }
+                  return const Center(
                     child: Text('No messages'),
-                  ),
-                );
-              })),
+                  );
+                })),
+          ),
           MessageBar(
             onSend: (message) async {
               await chatservice().Sendmessage(
@@ -181,14 +207,6 @@ class _ChatmessagesState extends State<Chatmessages> {
             },
             sendButtonColor: Colors.purple,
             actions: [
-              InkWell(
-                child: const Icon(
-                  Icons.add,
-                  color: Colors.black,
-                  size: 24,
-                ),
-                onTap: () {},
-              ),
               Padding(
                 padding: const EdgeInsets.only(left: 8, right: 8),
                 child: InkWell(
@@ -223,7 +241,7 @@ class _ChatmessagesState extends State<Chatmessages> {
 
 double seekwidth({required bool issender}) {
   if (issender) {
-    return 95;
+    return 105;
   }
   return 0;
 }

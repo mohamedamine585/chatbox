@@ -1,11 +1,12 @@
-import 'package:chat/Authservice.dart/Authservice.dart';
-import 'package:chat/Authservice.dart/chatuser.dart';
-import 'package:chat/Chatservice/chatservice.dart';
-import 'package:chat/Chatservice/chatuser/chatuserservice.dart';
 import 'package:chat/Chatservice/requestsender/requestsender.dart';
-import 'package:chat/Imageservice/Image.dart';
 import 'package:chat/views/accountview.dart';
 import 'package:flutter/material.dart';
+
+import '../Authservice.dart/Authservice.dart';
+import '../Authservice.dart/chatuser.dart';
+import '../Chatservice/chatservice.dart';
+import '../Chatservice/chatuserservice.dart';
+import '../imageservice/image.dart';
 
 class chatuserview extends StatefulWidget {
   const chatuserview({super.key});
@@ -27,21 +28,12 @@ class _chatuserviewState extends State<chatuserview> {
 
           if (d.data?.first?.email != vieweduser.email) {
             return Scaffold(
+              resizeToAvoidBottomInset: false,
+              backgroundColor: Colors.white,
               appBar: AppBar(
                 iconTheme: const IconThemeData(color: Colors.purple),
                 elevation: 0,
                 backgroundColor: Colors.white,
-                title: Row(
-                  children: [
-                    const SizedBox(
-                      width: 60,
-                    ),
-                    Text(
-                      vieweduser.Username ?? '',
-                      style: const TextStyle(color: Colors.purple),
-                    ),
-                  ],
-                ),
               ),
               body: Column(children: [
                 Center(
@@ -63,12 +55,11 @@ class _chatuserviewState extends State<chatuserview> {
                   height: 25,
                 ),
                 chatservice().checkifrequestissent(
-                  username: snapshot.data?.first?.Username ?? '',
-                  useremail: snapshot.data?.first?.email,
-                  viewedname: vieweduser.Username,
-                  viewedemail: vieweduser.email,
-                  context: context,
-                ),
+                    username: snapshot.data?.first?.Username,
+                    useremail: snapshot.data?.first?.email,
+                    viewedname: vieweduser.Username,
+                    viewedemail: vieweduser.email,
+                    context: context),
               ]),
             );
           }

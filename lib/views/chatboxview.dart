@@ -1,4 +1,3 @@
-import 'package:badges/badges.dart';
 import 'package:chat/views/search.dart';
 import 'package:flutter/material.dart';
 
@@ -74,9 +73,9 @@ class _Chatboxhome extends State<Chatboxhome> {
                                   arguments: user.Username);
                             },
                             icon: Badge(
-                                badgeContent: Text(
+                                label: Text(
                                     '${(((data1.data?.length) ?? 0 - viewednot) != 0) ? ((data1.data?.length) ?? 0 - viewednot) : ''}'),
-                                child: const Icon(Icons.notifications)))
+                               child: const Icon(Icons.notifications)))
                       ],
                     ),
                     body: StreamBuilder(

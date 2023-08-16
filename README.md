@@ -1,7 +1,9 @@
 # chat
 
-A new Flutter project.
-
+It's a chat application developed in Flutter, simple but which helped me a lot to learn, based on Firebase with its real-time service.
+The chat application allows to create an account to meet and chat with friends.
+It offers a simple chat service in terms of user interface and service, as well as a simple account management service.
+It was a brave and useful start in the field of development.
 ## Getting Started
 
 This project is a starting point for a Flutter application.

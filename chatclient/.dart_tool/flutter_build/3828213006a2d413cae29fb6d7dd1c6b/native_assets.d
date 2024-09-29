@@ -1,0 +1,1 @@
+ C:\\Users\\foxwe\\chatbox\\chatclient\\.dart_tool\\flutter_build\\3828213006a2d413cae29fb6d7dd1c6b\\native_assets.yaml: 
